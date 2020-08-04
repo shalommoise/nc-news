@@ -44,19 +44,36 @@ describe("/api", () => {
           expect(res.body.users[3].name).toBe("do_nothing");
         });
     });
-    describe("/:username", () => {
-      it("GET: 200 return details if user by user name", () => {
+    describe.only("/:username", () => {
+      it("GET: 200 return details if user by username", () => {
         return request(app)
           .get("/api/users/butter_bridge")
           .expect(200)
           .then((res) => {
-            expect(res.body.users[0]).toEqual({
+            expect(res.body.user[0]).toEqual({
               username: "butter_bridge",
               avatar_url:
                 "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
               name: "jonny",
             });
           });
+      });
+      it.only("GET: 200 return details if user by avatar_url", () => {
+        return (
+          request(app)
+            .get(
+              "/api/users/https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+            )
+            // .expect(200)
+            .then((res) => {
+              expect(res.body.user[0]).toEqual({
+                username: "butter_bridge",
+                avatar_url:
+                  "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                name: "jonny",
+              });
+            })
+        );
       });
     });
   });
@@ -82,7 +99,7 @@ describe("/api", () => {
         });
     });
     describe("/:article_id", () => {
-      it("Return specific article based on article_id", () => {
+      it("GET: 200- Return specific article based on article_id", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
@@ -93,6 +110,7 @@ describe("/api", () => {
             );
           });
       });
+      // it("PATCH: 200- can change details in article that are not dpendent on other tables: -body ")
     });
   });
 });

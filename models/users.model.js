@@ -18,3 +18,13 @@ exports.getUsersByUsername = (username) => {
       return results;
     });
 };
+
+exports.getUsersByAvatar = (avatar_url) => {
+  return connection
+    .select("*")
+    .from("users")
+    .where("avatar_url", avatar_url)
+    .then((results) => {
+      return results;
+    });
+};
