@@ -4,10 +4,30 @@ exports.formatDates = (list) => {
 
     return item;
   });
-  console.log(newList);
+
   return newList;
 };
 
-exports.makeRefObj = (list) => {};
+exports.makeRefObj = (articles) => {
+  const lookUpObj = {};
+  articles.forEach((article) => {
+    const title = article.title;
+    const id = article.article_id;
+    lookUpObj[title] = id;
+  });
 
-exports.formatComments = (comments, articleRef) => {};
+  return lookUpObj;
+};
+
+exports.formatComments = (comments, articleRef) => {
+  const newList = comments.map((comment) => {
+    comment.author = comment.created_by;
+    comment.article_id = articleRef[comment.belongs_to];
+
+    delete comment.created_by;
+    delete comment.belongs_to;
+    return comment;
+  });
+
+  return newList;
+};
