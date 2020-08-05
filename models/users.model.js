@@ -15,16 +15,8 @@ exports.getUsersByUsername = (username) => {
     .from("users")
     .where("username", username)
     .then((results) => {
-      return results;
-    });
-};
-
-exports.getUsersByAvatar = (avatar_url) => {
-  return connection
-    .select("*")
-    .from("users")
-    .where("avatar_url", avatar_url)
-    .then((results) => {
+      if (results.length === 0)
+        return Promise.reject({ status: 404, msg: "User not found" });
       return results;
     });
 };
