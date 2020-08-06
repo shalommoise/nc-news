@@ -71,25 +71,25 @@ describe("/api", () => {
     });
   });
   describe("/articles", () => {
-    it.only("GET: 200: return full articles table", () => {
+    it("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
-          console.log(res.body.articles);
           res.body.articles.forEach((article) =>
-            expect(Object.keys(article)).toEqual([
-              "article_id",
-              "title",
-              "body",
-              "votes",
-              "topic",
-              "author",
-              "created_at",
-            ])
+            expect(article).toEqual(
+              expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                topic: expect.any(String),
+                author: expect.any(String),
+                created_at: expect.any(String),
+                comment_count: expect.any(Number),
+              })
+            )
           );
-          expect(res.body.articles[0].article_id).toBe(1);
-          expect(res.body.articles[5].article_id).toBe(6);
         });
     });
     describe("/:article_id", () => {
@@ -138,7 +138,7 @@ describe("/api", () => {
             );
           });
       });
-      describe("article errors", () => {
+      describe("articles/:article_id errors", () => {
         it("404 article_id does not exist", () => {
           return request(app)
             .get("/api/articles/15")
@@ -245,6 +245,112 @@ describe("/api", () => {
         });
       });
     });
-    // test articles  need comment_count  and can be sorted
+    it("GET 200, get comment count for articles", () => {
+      return request(app)
+        .get("/api/articles/")
+        .expect(200)
+        .then((res) => {
+          res.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                topic: expect.any(String),
+                author: expect.any(String),
+                created_at: expect.any(String),
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    it("GET 200 all articles sorted by deafult to date", () => {
+      return request(app)
+        .get("/api/articles/")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("created_at");
+        });
+    });
+    it("GET 200 sort articles by any valid column in descending order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=topic&order=desc")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("topic", {
+            descending: true,
+          });
+        });
+    });
+    it("GET 200 filters the articles by author", () => {
+      return request(app)
+        .get("/api/articles?author=icellusedkars")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBeGreaterThan(0);
+          res.body.articles.forEach((article) => {
+            expect(article.author).toBe("icellusedkars");
+          });
+        });
+    });
+    it("GET 200 filters the articles by topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBeGreaterThan(0);
+          res.body.articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+          });
+        });
+    });
+  });
+  describe("comments/:comment_id", () => {
+    it("PATCH 200", () => {
+      return request(app)
+        .patch("/api/comments/2")
+        .send({ inc_votes: -2 })
+        .expect(200)
+        .then((res) => {
+          expect(res.body.comment[0].votes).toBe(12);
+        });
+    });
+    it("GET 200 all comments", () => {
+      return request(app)
+        .get("/api/comments/")
+        .expect(200)
+        .then((res) => {
+          res.body.comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                article_id: expect.any(Number),
+                author: expect.any(String),
+                votes: expect.any(Number),
+                body: expect.any(String),
+                created_at: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    it("DELETE 204, removes a comment by ID", () => {
+      return request(app)
+        .del("/api/comments/2")
+        .expect(204)
+        .then(() => {
+          return request(app)
+            .get("/api/comments/")
+            .then((res) => {
+              expect(
+                res.body.comments.filter((comment) => {
+                  comment.comment_id === 2;
+                })
+              ).toEqual([]);
+            });
+        });
+    });
   });
 });

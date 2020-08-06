@@ -3,7 +3,7 @@ const app = express();
 const apiRouter = require("./routers/api.router");
 const {
   customErrorHandler,
-  PSQLerrorHandler400,
+  PSQLerrorHandler,
   serverErrorHandler,
 } = require("./errors");
 
@@ -12,7 +12,7 @@ app.use(express.json());
 app.use("/api", apiRouter);
 
 app.use(customErrorHandler);
-app.use(PSQLerrorHandler400);
+app.use(PSQLerrorHandler);
 app.use(serverErrorHandler);
 
 app.all("*", (req, res, next) => {

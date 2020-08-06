@@ -4,14 +4,19 @@ const {
   patchArticleVote,
 } = require("../models/articles.model");
 
-exports.sendAllArticles = (req, res) => {
-  getAllArticles().then((articles) => {
-    res.send({ articles });
-  });
+exports.sendAllArticles = (req, res, next) => {
+  const { sort_by, order, author, topic } = req.query;
+
+  getAllArticles(sort_by, order, author, topic)
+    .then((articles) => {
+      res.send({ articles });
+    })
+    .catch(next);
 };
 
 exports.sendArticleById = (req, res, next) => {
   const { article_id } = req.params;
+
   getArticleById(article_id)
     .then((article) => {
       res.send({ article });

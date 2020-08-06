@@ -1,12 +1,28 @@
 const connection = require("../db/connection");
 const { returning } = require("../db/connection");
 
-exports.getAllArticles = () => {
+exports.getAllArticles = (
+  sort_by = "created_at",
+  order = "asc",
+  author,
+  topic
+) => {
   return connection
-    .select("*")
+    .select("articles.*")
     .from("articles")
+    .join("comments", "articles.article_id", "comments.article_id")
+    .groupBy("articles.article_id")
+    .count("comments.comment_id", { as: "comment_count" })
+    .orderBy(sort_by, order)
+    .modify((query) => {
+      if (author) query.where("articles.author", author);
+      else if (topic) query.where("articles.topic", topic);
+    })
     .then((res) => {
-      return res;
+      return res.map((article) => {
+        article.comment_count = Number(article.comment_count);
+        return article;
+      });
     });
 };
 

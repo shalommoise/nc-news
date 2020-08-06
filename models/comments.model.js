@@ -28,7 +28,34 @@ exports.getCommentsById = (
     .where("comments.article_id", article_id)
     .orderBy(sort_by, order)
     .then((res) => {
-      console.log(res);
+      return res;
+    });
+};
+
+exports.updateCommentByVote = (comment_id, inc_votes) => {
+  return connection("comments")
+    .where("comment_id", comment_id)
+    .increment("votes", inc_votes)
+    .returning("*")
+    .then((res) => {
+      return res;
+    });
+};
+
+exports.removeComment = (comment_id) => {
+  return connection("comments")
+    .where("comment_id", comment_id)
+    .del()
+    .then((res) => {
+      return res;
+    });
+};
+
+exports.sendAllComments = () => {
+  return connection
+    .select("*")
+    .from("comments")
+    .then((res) => {
       return res;
     });
 };
