@@ -70,12 +70,13 @@ describe("/api", () => {
       });
     });
   });
-  describe("articles", () => {
-    it("GET: 200: return full articles table", () => {
+  describe("/articles", () => {
+    it.only("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
+          console.log(res.body.articles);
           res.body.articles.forEach((article) =>
             expect(Object.keys(article)).toEqual([
               "article_id",
@@ -103,7 +104,7 @@ describe("/api", () => {
             );
           });
       });
-      it.only("GET: 200: - returns sepcific article with comment_count", () => {
+      it("GET: 200: - returns sepcific article with comment_count", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
@@ -154,42 +155,96 @@ describe("/api", () => {
               expect(res.body.msg).toBe("bad request");
             });
         });
+        it("PATCH ERR, inc_votes is not a number, defaults to add to 0", () => {
+          const newVote = { inc_votes: "twenty" };
+          return request(app)
+            .patch("/api/articles/5")
+            .send(newVote)
+            .expect(200)
+            .then((res) => {
+              expect(res.body.article[0].votes).toEqual(0);
+            });
+        });
       });
-      it.only("GET: 200, recieves specific comments", () => {
-        return request(app)
-          .get("/api/articles/6/comments")
-          .expect(200)
-          .then((res) => {
-            expect(res.body.comments[0]).toEqual(
-              expect.objectContaining({
-                article_id: expect.any(Number),
-                author: expect.any(String),
-                body: expect.any(String),
-                comment_id: expect.any(Number),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-              })
-            );
+      describe("/comments", () => {
+        it("POST: 201, creates comments on articles", () => {
+          return request(app)
+            .post("/api/articles/5/comments")
+            .send({ username: "rogersop", body: "Great article!" })
+            .expect(201)
+            .then((res) => {
+              expect(res.body.comment[0]).toEqual(
+                expect.objectContaining({
+                  article_id: 5,
+                  author: "rogersop",
+                  body: "Great article!",
+                  comment_id: expect.any(Number),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                })
+              );
+            });
+        });
+        it("GET: 200, recieves specific comments", () => {
+          return request(app)
+            .get("/api/articles/5/comments")
+            .expect(200)
+            .then((res) => {
+              expect(res.body.comments.length).toBeGreaterThan(0);
+              res.body.comments.forEach((comment) => {
+                expect(comment).toEqual(
+                  expect.objectContaining({
+                    comment_id: expect.any(Number),
+                    article_id: 5,
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    comment_id: expect.any(Number),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                  })
+                );
+              });
+            });
+        });
+        it("GET 200 comments by article_id sorted by any column, deafults to created_at", () => {
+          return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then((res) => {
+              expect(res.body.comments).toBeSortedBy("created_at");
+            });
+        });
+        it("GET: 200: comments by article_id, sorted by any valid column", () => {
+          return request(app)
+            .get("/api/articles/1/comments?sort_by=comment_id")
+            .expect(200)
+            .then((res) => {
+              expect(res.body.comments).toBeSortedBy("comment_id");
+            });
+        });
+        it("GET: 200: comments by article_id, sorted by any valid column, in desc or asc order", () => {
+          return request(app)
+            .get("/api/articles/1/comments?sort_by=comment_id&order=desc")
+            .expect(200)
+            .then((res) => {
+              expect(res.body.comments).toBeSortedBy("comment_id", {
+                descending: true,
+              });
+            });
+        });
+        describe("comments errors", () => {
+          it.only("POST error, missing username", () => {
+            return request(app)
+              .post("/api/articles/5/comments")
+              .send({ body: "Great article!" })
+              .expect(406)
+              .then((res) => {
+                expect(res.body.msg).toBe("missing user information");
+              });
           });
-      });
-      it("POST: 201, creates comments on articles", () => {
-        return request(app)
-          .post("/api/articles/5/comments")
-          .send({ username: "rogersop", body: "Great article!" })
-          .expect(201)
-          .then((res) => {
-            expect(res.body.comment[0]).toEqual(
-              expect.objectContaining({
-                article_id: 5,
-                author: "rogersop",
-                body: "Great article!",
-                comment_id: expect.any(Number),
-                created_at: expect.any(String),
-                votes: expect.any(Number),
-              })
-            );
-          });
+        });
       });
     });
+    // test articles  need comment_count  and can be sorted
   });
 });

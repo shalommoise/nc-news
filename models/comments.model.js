@@ -1,5 +1,5 @@
 const connection = require("../db/connection");
-const { from } = require("../db/connection");
+const { from, andHaving } = require("../db/connection");
 
 exports.makeComment = (article_id, comment) => {
   return connection
@@ -11,17 +11,24 @@ exports.makeComment = (article_id, comment) => {
     .into("comments")
     .returning("*")
     .then((res) => {
+      if (res[0].author === null)
+        return Promise.reject({ status: 406, msg: "missing user information" });
       return res;
     });
 };
 
-exports.getCommentsById = (article_id) => {
+exports.getCommentsById = (
+  article_id,
+  sort_by = "comments.created_at",
+  order = "asc"
+) => {
   return connection
     .select("*")
     .from("comments")
-    .join("articles", "articles.article_id", "comments.article_id")
     .where("comments.article_id", article_id)
+    .orderBy(sort_by, order)
     .then((res) => {
+      console.log(res);
       return res;
     });
 };

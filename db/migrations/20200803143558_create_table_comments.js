@@ -1,7 +1,7 @@
 const comments = require("../data/test-data/comments");
 
 exports.up = function (knex) {
-  console.log("creating comments Table");
+  // console.log("creating comments Table");
   return knex.schema.createTable("comments", (commentsTable) => {
     commentsTable.increments("comment_id").primary();
     commentsTable.string("author").references("users.username");
@@ -13,6 +13,6 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-  console.log("dropping comments Table");
+  //console.log("dropping comments Table");
   return knex.schema.dropTable("comments");
 };

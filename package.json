@@ -11,6 +11,11 @@
     "seed": "knex seed:run",
     "test": "jest --watch"
   },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-sorted"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/northcoders/be-nc-news.git"

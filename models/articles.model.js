@@ -28,6 +28,7 @@ exports.getArticleById = (article_id) => {
 };
 
 exports.patchArticleVote = (article_id, newVote) => {
+  if (typeof newVote.inc_votes !== "number") newVote.inc_votes = 0;
   return connection("articles")
     .where("article_id", article_id)
     .increment("votes", newVote.inc_votes)
