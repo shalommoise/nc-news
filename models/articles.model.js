@@ -1,10 +1,12 @@
 const connection = require("../db/connection");
 const { returning } = require("../db/connection");
 
-exports.getAllArticles = (
-  { sort_by = "created_at", order = "asc", author, topic },
-  query
-) => {
+exports.getAllArticles = ({
+  sort_by = "created_at",
+  order = "asc",
+  author,
+  topic,
+}) => {
   return connection
     .select("articles.*")
     .from("articles")
@@ -19,8 +21,6 @@ exports.getAllArticles = (
     .then((res) => {
       if (res.length === 0)
         return Promise.reject({ status: 404, msg: "No articles found" });
-      if (!author && !topic)
-        return Promise.reject({ status: 400, msg: "invalid search column" });
       else
         return res.map((article) => {
           article.comment_count = Number(article.comment_count);

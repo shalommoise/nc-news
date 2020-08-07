@@ -70,8 +70,8 @@ describe("/api", () => {
       });
     });
   });
-  describe("/articles", () => {
-    it("GET: 200: return full articles table", () => {
+  describe.only("/articles", () => {
+    it.only("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -267,7 +267,6 @@ describe("/api", () => {
               .get("/api/articles/3/comments")
               .expect(200)
               .then((res) => {
-                console.log(res.body);
                 expect(res.body.msg).toBe("article has no comments");
               });
           });
@@ -282,7 +281,7 @@ describe("/api", () => {
         });
       });
     });
-    it("GET: 200: get comment count for articles", () => {
+    it.only("GET: 200: get comment count for articles", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -303,7 +302,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: all articles sorted by deafult to date", () => {
+    it.only("GET: 200: all articles sorted by deafult to date", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -311,7 +310,7 @@ describe("/api", () => {
           expect(res.body.articles).toBeSortedBy("created_at");
         });
     });
-    it("GET: 200: sort articles by any valid column in descending order", () => {
+    it.only("GET: 200: sort articles by any valid column in descending order", () => {
       return request(app)
         .get("/api/articles?sort_by=topic&order=desc")
         .expect(200)
@@ -343,7 +342,7 @@ describe("/api", () => {
           });
         });
     });
-    describe.only("/articles errors", () => {
+    describe("/articles errors", () => {
       it("Bad request: 400: filter by query that does not exist", () => {
         return request(app)
           .get("/api/articles?topic=notatopic")
