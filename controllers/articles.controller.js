@@ -28,13 +28,15 @@ exports.sendArticleById = (req, res, next) => {
     });
 };
 
-exports.updateArticleVote = (req, res) => {
+exports.updateArticleVote = (req, res, next) => {
   const { article_id } = req.params;
   const newVote = req.body;
 
-  patchArticleVote(article_id, newVote).then((article) => {
-    res.send({ article });
-  });
+  patchArticleVote(article_id, newVote)
+    .then((article) => {
+      res.send({ article });
+    })
+    .catch(next);
 };
 
 exports.methodNotAllowed = (req, res, next) => {

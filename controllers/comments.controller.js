@@ -33,9 +33,11 @@ exports.patchCommentByVote = (req, res, next) => {
   const { comment_id } = req.params;
   const { inc_votes } = req.body;
 
-  updateCommentByVote(comment_id, inc_votes).then((comment) => {
-    res.send({ comment });
-  });
+  updateCommentByVote(comment_id, inc_votes)
+    .then((comment) => {
+      res.send({ comment });
+    })
+    .catch(next);
 };
 
 exports.deleteComment = (req, res, next) => {
@@ -48,8 +50,10 @@ exports.deleteComment = (req, res, next) => {
     .catch(next);
 };
 
-exports.getAllComments = (req, res) => {
-  sendAllComments().then((comments) => {
-    res.send({ comments });
-  });
+exports.getAllComments = (req, res, next) => {
+  sendAllComments()
+    .then((comments) => {
+      res.send({ comments });
+    })
+    .catch(next);
 };
