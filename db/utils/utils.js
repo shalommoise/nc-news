@@ -1,8 +1,9 @@
 exports.formatDates = (list) => {
   const newList = list.map((item) => {
-    item.created_at = new Date(item.created_at);
+    const copy = { ...item };
+    copy.created_at = new Date(item.created_at);
 
-    return item;
+    return copy;
   });
 
   return newList;

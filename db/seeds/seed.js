@@ -12,21 +12,20 @@ exports.seed = function (knex) {
     .rollback()
     .then(() => knex.migrate.latest())
     .then(() => {
-      const topicsInsertions = knex("topics").insert(topicData).returning("*"); // topics
-      const usersInsertions = knex("users").insert(userData).returning("*"); // users
+      const topicsInsertions = knex("topics").insert(topicData).returning("*");
+      const usersInsertions = knex("users").insert(userData).returning("*");
 
-      return Promise.all([topicsInsertions, usersInsertions])
-        .then(() => {
-          const formattedArticlesTimes = formatDates(articleData);
-          return knex("articles").insert(formattedArticlesTimes).returning("*");
-        })
-        .then((articleRows) => {
-          const articleRef = makeRefObj(articleRows);
-          const newDates = formatDates(commentData);
+      return Promise.all([topicsInsertions, usersInsertions]).then(() => {
+        const formattedArticlesTimes = formatDates(articleData);
+        return knex("articles").insert(formattedArticlesTimes).returning("*");
+      });
+    })
+    .then((articleRows) => {
+      const articleRef = makeRefObj(articleRows);
+      const newDates = formatDates(commentData);
 
-          const formattedComments = formatComments(newDates, articleRef);
+      const formattedComments = formatComments(newDates, articleRef);
 
-          return knex("comments").insert(formattedComments);
-        });
+      return knex("comments").insert(formattedComments);
     });
 };

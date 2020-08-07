@@ -1,5 +1,4 @@
 const connection = require("../db/connection");
-const { from, andHaving } = require("../db/connection");
 
 exports.makeComment = (article_id, comment) => {
   return connection

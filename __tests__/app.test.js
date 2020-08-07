@@ -139,7 +139,7 @@ describe("/api", () => {
           });
       });
       describe(":article_id errors", () => {
-        it("Nt found: 404: article_id does not exist", () => {
+        it("Not found: 404: article_id does not exist", () => {
           return request(app)
             .get("/api/articles/15")
             .expect(404)
@@ -267,6 +267,7 @@ describe("/api", () => {
               .get("/api/articles/3/comments")
               .expect(200)
               .then((res) => {
+                console.log(res.body);
                 expect(res.body.msg).toBe("article has no comments");
               });
           });
@@ -342,7 +343,7 @@ describe("/api", () => {
           });
         });
     });
-    describe("/articles errors", () => {
+    describe.only("/articles errors", () => {
       it("Bad request: 400: filter by query that does not exist", () => {
         return request(app)
           .get("/api/articles?topic=notatopic")

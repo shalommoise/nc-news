@@ -4,7 +4,7 @@ const {
   formatComments,
 } = require("../db/utils/utils");
 
-describe("formatDates", () => {
+describe.only("formatDates", () => {
   it("returns an empty array when list is empty", () => {
     const list = [];
     expect(formatDates(list)).toEqual([]);
@@ -39,7 +39,16 @@ describe("formatDates", () => {
         created_at: 1471522123456,
       },
     ];
-    expect(formatDates(list)).not.toBe(list);
+    formatDates(list);
+    expect(list).toEqual([
+      {
+        something: "else",
+        created_at: 1471522072389,
+      },
+      {
+        created_at: 1471522123456,
+      },
+    ]);
   });
 });
 
@@ -89,7 +98,7 @@ describe("makeRefObj", () => {
   });
 });
 
-describe.only("formatComments", () => {
+describe("formatComments", () => {
   it("returns an empty array", () => {
     expect(formatComments([])).toEqual([]);
   });

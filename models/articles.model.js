@@ -2,10 +2,7 @@ const connection = require("../db/connection");
 const { returning } = require("../db/connection");
 
 exports.getAllArticles = (
-  sort_by = "created_at",
-  order = "asc",
-  author,
-  topic,
+  { sort_by = "created_at", order = "asc", author, topic },
   query
 ) => {
   return connection
@@ -22,17 +19,7 @@ exports.getAllArticles = (
     .then((res) => {
       if (res.length === 0)
         return Promise.reject({ status: 404, msg: "No articles found" });
-      const arr = Object.keys(query);
-
-      if (
-        !(
-          arr.includes("sort_by") ||
-          arr.includes("order") ||
-          arr.includes("author") ||
-          arr.includes("topic")
-        ) &&
-        arr.length > 0
-      )
+      if (!author && !topic)
         return Promise.reject({ status: 400, msg: "invalid search column" });
       else
         return res.map((article) => {

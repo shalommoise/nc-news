@@ -1,15 +1,9 @@
-const {
-  getUsers,
-  getUsersByUsername,
-  getUsersByAvatar,
-} = require("../models/users.model");
+const { getUsers, getUsersByUsername } = require("../models/users.model");
 
 exports.sendUsers = (req, res, next) => {
   getUsers()
     .then((users) => res.send({ users }))
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.sendUsersByUsername = (req, res, next) => {
@@ -19,7 +13,5 @@ exports.sendUsersByUsername = (req, res, next) => {
     .then((user) => {
       res.send({ user });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };

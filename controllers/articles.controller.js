@@ -5,15 +5,11 @@ const {
 } = require("../models/articles.model");
 
 exports.sendAllArticles = (req, res, next) => {
-  const { sort_by, order, author, topic } = req.query;
-
-  getAllArticles(sort_by, order, author, topic, req.query)
+  getAllArticles(req.query)
     .then((articles) => {
       res.send({ articles });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.sendArticleById = (req, res, next) => {
@@ -23,9 +19,7 @@ exports.sendArticleById = (req, res, next) => {
     .then((article) => {
       res.send({ article });
     })
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 exports.updateArticleVote = (req, res, next) => {
