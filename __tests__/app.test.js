@@ -45,7 +45,7 @@ describe("/api", () => {
         });
     });
     describe("/:username", () => {
-      it("GET: 200 return details if user by username", () => {
+      it("GET: 200 return details of user by username", () => {
         return request(app)
           .get("/api/users/butter_bridge")
           .expect(200)
@@ -60,7 +60,7 @@ describe("/api", () => {
       });
     });
     describe("username error", () => {
-      it("404, username not found", () => {
+      it("Not found: 404: username not found", () => {
         return request(app)
           .get("/api/users/brian")
           .expect(404)
@@ -93,7 +93,7 @@ describe("/api", () => {
         });
     });
     describe("/:article_id", () => {
-      it("GET: 200- Return specific article based on article_id", () => {
+      it("GET: 200: returns specific article based on article_id", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
@@ -104,7 +104,7 @@ describe("/api", () => {
             );
           });
       });
-      it("GET: 200: - returns sepcific article with comment_count", () => {
+      it("GET: 200: returns sepcific article with comment_count", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
@@ -116,7 +116,7 @@ describe("/api", () => {
             );
           });
       });
-      it("PATCH: 200- updates the votes item in the article", () => {
+      it("PATCH: 200: updates the votes item in the article", () => {
         const newVote = { inc_votes: 20 };
         return request(app)
           .patch("/api/articles/5")
@@ -139,7 +139,7 @@ describe("/api", () => {
           });
       });
       describe(":article_id errors", () => {
-        it("404 article_id does not exist", () => {
+        it("Nt found: 404: article_id does not exist", () => {
           return request(app)
             .get("/api/articles/15")
             .expect(404)
@@ -147,7 +147,7 @@ describe("/api", () => {
               expect(res.body.msg).toBe("article not found");
             });
         });
-        it("GET 404, invalid article_id", () => {
+        it("Not found: 404:, invalid article_id", () => {
           return request(app)
             .get("/api/articles/lion")
             .expect(400)
@@ -165,7 +165,7 @@ describe("/api", () => {
               expect(res.body.article[0].votes).toEqual(0);
             });
         });
-        it("405, try to delete or put an article", () => {
+        it("Method error: 405: try to delete or put an article", () => {
           const methods = ["del", "put"];
           const promises = methods.map((method) => {
             return request(app)
@@ -281,7 +281,7 @@ describe("/api", () => {
         });
       });
     });
-    it("GET 200, get comment count for articles", () => {
+    it("GET: 200: get comment count for articles", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -302,7 +302,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET 200 all articles sorted by deafult to date", () => {
+    it("GET: 200: all articles sorted by deafult to date", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -310,7 +310,7 @@ describe("/api", () => {
           expect(res.body.articles).toBeSortedBy("created_at");
         });
     });
-    it("GET 200 sort articles by any valid column in descending order", () => {
+    it("GET: 200: sort articles by any valid column in descending order", () => {
       return request(app)
         .get("/api/articles?sort_by=topic&order=desc")
         .expect(200)
@@ -320,7 +320,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET 200 filters the articles by author", () => {
+    it("GET: 200: filters the articles by author", () => {
       return request(app)
         .get("/api/articles?author=icellusedkars")
         .expect(200)
@@ -331,7 +331,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET 200 filters the articles by topic", () => {
+    it("GET: 200: filters the articles by topic", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
@@ -343,7 +343,7 @@ describe("/api", () => {
         });
     });
     describe("/articles errors", () => {
-      it("400 error, filter by query that does not exist", () => {
+      it("Bad request: 400: filter by query that does not exist", () => {
         return request(app)
           .get("/api/articles?topic=notatopic")
           .expect(404)
@@ -351,7 +351,7 @@ describe("/api", () => {
             expect(res.body.msg).toBe("No articles found");
           });
       });
-      it("400 error, filter by column that does not exist", () => {
+      it("Bad request: 400: filter by column that does not exist", () => {
         return request(app)
           .get("/api/articles?au=butter_bridge")
           .expect(400)
@@ -362,7 +362,7 @@ describe("/api", () => {
     });
   });
   describe("comments/:comment_id", () => {
-    it("PATCH 200", () => {
+    it("PATCH 200: updtes the votes item in the comments", () => {
       return request(app)
         .patch("/api/comments/2")
         .send({ inc_votes: -2 })
@@ -371,7 +371,7 @@ describe("/api", () => {
           expect(res.body.comment[0].votes).toBe(12);
         });
     });
-    it("GET 200 all comments", () => {
+    it("GET: 200: returns list of all comments", () => {
       return request(app)
         .get("/api/comments/")
         .expect(200)
@@ -390,7 +390,7 @@ describe("/api", () => {
           });
         });
     });
-    it("DELETE 204, removes a comment by ID", () => {
+    it("DELETE: 204: removes a comment by comment_id", () => {
       return request(app)
         .del("/api/comments/2")
         .expect(204)
@@ -408,7 +408,7 @@ describe("/api", () => {
     });
 
     describe("comments/:comment_id errors", () => {
-      it("404 try to delete a comment that does not exist", () => {
+      it("Not found: 404: try to delete a comment that does not exist", () => {
         return request(app)
           .del("/api/comments/19")
           .expect(404)
@@ -416,7 +416,7 @@ describe("/api", () => {
             expect(res.body.msg).toBe("comment not found");
           });
       });
-      it("PATCH ERR, try to change vot by a non-number, deafaults to add by 0 ", () => {
+      it("PATCH ERR, try to change vote by a non-number, defaults to add by 0", () => {
         return request(app)
           .patch("/api/comments/2")
           .send({ inc_votes: "thirty" })
