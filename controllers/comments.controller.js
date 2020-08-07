@@ -1,6 +1,6 @@
 const {
   makeComment,
-  getCommentsById,
+  getCommentsByArticleId,
   updateCommentByVote,
   removeComment,
   sendAllComments,
@@ -17,14 +17,16 @@ exports.postComment = (req, res, next) => {
     .catch(next);
 };
 
-exports.sendCommentsById = (req, res, next) => {
+exports.sendCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
   const { sort_by } = req.query;
   const { order } = req.query;
 
-  getCommentsById(article_id, sort_by, order).then((comments) => {
-    res.send({ comments });
-  });
+  getCommentsByArticleId(article_id, sort_by, order)
+    .then((comments) => {
+      res.send({ comments });
+    })
+    .catch(next);
 };
 
 exports.patchCommentByVote = (req, res, next) => {
@@ -36,12 +38,14 @@ exports.patchCommentByVote = (req, res, next) => {
   });
 };
 
-exports.deleteComment = (req, res) => {
+exports.deleteComment = (req, res, next) => {
   const { comment_id } = req.params;
 
-  removeComment(comment_id).then(() => {
-    res.sendStatus(204);
-  });
+  removeComment(comment_id)
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch(next);
 };
 
 exports.getAllComments = (req, res) => {

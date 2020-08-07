@@ -5,7 +5,8 @@ exports.getAllArticles = (
   sort_by = "created_at",
   order = "asc",
   author,
-  topic
+  topic,
+  query
 ) => {
   return connection
     .select("articles.*")
@@ -19,10 +20,25 @@ exports.getAllArticles = (
       else if (topic) query.where("articles.topic", topic);
     })
     .then((res) => {
-      return res.map((article) => {
-        article.comment_count = Number(article.comment_count);
-        return article;
-      });
+      if (res.length === 0)
+        return Promise.reject({ status: 404, msg: "No articles found" });
+      const arr = Object.keys(query);
+
+      if (
+        !(
+          arr.includes("sort_by") ||
+          arr.includes("order") ||
+          arr.includes("author") ||
+          arr.includes("topic")
+        ) &&
+        arr.length > 0
+      )
+        return Promise.reject({ status: 400, msg: "invalid search column" });
+      else
+        return res.map((article) => {
+          article.comment_count = Number(article.comment_count);
+          return article;
+        });
     });
 };
 

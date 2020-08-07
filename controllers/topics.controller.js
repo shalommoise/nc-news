@@ -1,9 +1,5 @@
 const { getTopics } = require("../models/topics.model");
 
 exports.sendTopics = (req, res, next) => {
-  getTopics()
-    .then((topics) => res.send({ topics }))
-    .catch((err) => {
-      next(err);
-    });
+  getTopics().then((topics) => res.send({ topics }));
 };

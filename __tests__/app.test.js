@@ -138,7 +138,7 @@ describe("/api", () => {
             );
           });
       });
-      describe("articles/:article_id errors", () => {
+      describe(":article_id errors", () => {
         it("404 article_id does not exist", () => {
           return request(app)
             .get("/api/articles/15")
@@ -164,6 +164,18 @@ describe("/api", () => {
             .then((res) => {
               expect(res.body.article[0].votes).toEqual(0);
             });
+        });
+        it("405, try to delete or put an article", () => {
+          const methods = ["del", "put"];
+          const promises = methods.map((method) => {
+            return request(app)
+              [method]("/api/articles/2")
+              .expect(405)
+              .then((res) => {
+                expect(res.body.msg).toBe("method not allowed");
+              });
+          });
+          return Promise.all(promises);
         });
       });
       describe("/comments", () => {
@@ -233,13 +245,37 @@ describe("/api", () => {
             });
         });
         describe("comments errors", () => {
-          it.only("POST error, missing username", () => {
+          it("POST error, missing username", () => {
             return request(app)
               .post("/api/articles/5/comments")
               .send({ body: "Great article!" })
               .expect(406)
               .then((res) => {
                 expect(res.body.msg).toBe("missing user information");
+              });
+          });
+          it("GET error, sort comments by column that does not exist", () => {
+            return request(app)
+              .get("/api/articles/?sort_by=likes")
+              .expect(400)
+              .then((res) => {
+                expect(res.body.msg).toBe("column not valid");
+              });
+          });
+          it("200, article has no comments", () => {
+            return request(app)
+              .get("/api/articles/3/comments")
+              .expect(200)
+              .then((res) => {
+                expect(res.body.msg).toBe("article has no comments");
+              });
+          });
+          it("404, article does not exist", () => {
+            return request(app)
+              .get("/api/articles/20/comments")
+              .expect(404)
+              .then((res) => {
+                expect(res.body.msg).toBe("article not found");
               });
           });
         });
@@ -306,6 +342,24 @@ describe("/api", () => {
           });
         });
     });
+    describe("/articles errors", () => {
+      it("400 error, filter by query that does not exist", () => {
+        return request(app)
+          .get("/api/articles?topic=notatopic")
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).toBe("No articles found");
+          });
+      });
+      it("400 error, filter by column that does not exist", () => {
+        return request(app)
+          .get("/api/articles?au=butter_bridge")
+          .expect(400)
+          .then((res) => {
+            expect(res.body.msg).toBe("invalid search column");
+          });
+      });
+    });
   });
   describe("comments/:comment_id", () => {
     it("PATCH 200", () => {
@@ -351,6 +405,26 @@ describe("/api", () => {
               ).toEqual([]);
             });
         });
+    });
+
+    describe("comments/:comment_id errors", () => {
+      it("404 try to delete a comment that does not exist", () => {
+        return request(app)
+          .del("/api/comments/19")
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).toBe("comment not found");
+          });
+      });
+      it("PATCH ERR, try to change vot by a non-number, deafaults to add by 0 ", () => {
+        return request(app)
+          .patch("/api/comments/2")
+          .send({ inc_votes: "thirty" })
+          .expect(200)
+          .then((res) => {
+            expect(res.body.comment[0].votes).toBe(14);
+          });
+      });
     });
   });
 });

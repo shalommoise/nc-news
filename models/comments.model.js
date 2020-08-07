@@ -17,7 +17,7 @@ exports.makeComment = (article_id, comment) => {
     });
 };
 
-exports.getCommentsById = (
+exports.getCommentsByArticleId = (
   article_id,
   sort_by = "comments.created_at",
   order = "asc"
@@ -28,11 +28,31 @@ exports.getCommentsById = (
     .where("comments.article_id", article_id)
     .orderBy(sort_by, order)
     .then((res) => {
+      if (res.length === 0) {
+        return connection
+          .select("article_id")
+          .from("articles")
+          .where("article_id", article_id)
+          .then((res) => {
+            if (res.length === 0) {
+              return Promise.reject({
+                status: 404,
+                msg: "article not found",
+              });
+            } else
+              return Promise.reject({
+                status: 200,
+                msg: "article has no comments",
+              });
+          });
+      }
+
       return res;
     });
 };
 
 exports.updateCommentByVote = (comment_id, inc_votes) => {
+  if (typeof inc_votes !== "number") inc_votes = 0;
   return connection("comments")
     .where("comment_id", comment_id)
     .increment("votes", inc_votes)
@@ -47,7 +67,9 @@ exports.removeComment = (comment_id) => {
     .where("comment_id", comment_id)
     .del()
     .then((res) => {
-      return res;
+      if (res === 0) {
+        return Promise.reject({ status: 404, msg: "comment not found" });
+      } else return res;
     });
 };
 
