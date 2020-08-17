@@ -32,7 +32,3 @@ exports.updateArticleVote = (req, res, next) => {
     })
     .catch(next);
 };
-
-exports.methodNotAllowed = (req, res, next) => {
-  return Promise.reject({ status: 405, msg: "method not allowed" }).catch(next);
-};

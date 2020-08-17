@@ -1,5 +1,5 @@
 const app = require("../app");
-
+const { methodsErrorHandler } = require("../errors");
 const commentsRouter = require("express").Router();
 const {
   patchCommentByVote,
@@ -12,5 +12,7 @@ commentsRouter
   .delete(deleteComment);
 
 commentsRouter.get("/", getAllComments);
+
+commentsRouter.all(methodsErrorHandler);
 
 module.exports = commentsRouter;
