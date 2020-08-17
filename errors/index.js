@@ -9,12 +9,14 @@ exports.PSQLerrorHandler = (err, req, res, next) => {
     return res.status(400).send({ msg: "bad request" });
   } else if (err.code === "42P01") {
     return res.status(406).send({ msg: "missing user information" });
-  }
-  if (err.code === "42703") {
+  } else if (err.code === "42703") {
     return res.status(400).send({ msg: "column not valid" });
   } else {
     next(err);
   }
+};
+exports.methodsErrorHandler = (err, req, res, next) => {
+  return res.status(405).send({ msg: "method not allowed" }).catch(next);
 };
 
 exports.serverErrorHandler = (err, req, res, next) => {
