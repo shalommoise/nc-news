@@ -71,7 +71,7 @@ describe("/api", () => {
     });
   });
   describe.only("/articles", () => {
-    it.only("GET: 200: return full articles table", () => {
+    it("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -281,7 +281,7 @@ describe("/api", () => {
         });
       });
     });
-    it.only("GET: 200: get comment count for articles", () => {
+    it("GET: 200: get comment count for articles", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -302,21 +302,43 @@ describe("/api", () => {
           });
         });
     });
-    it.only("GET: 200: all articles sorted by deafult to date", () => {
+    it("GET: 200: all articles sorted by deafult to date", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
-          expect(res.body.articles).toBeSortedBy("created_at");
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
         });
     });
-    it.only("GET: 200: sort articles by any valid column in descending order", () => {
+    it("GET: 200: sort articles by any valid column in descending order", () => {
       return request(app)
         .get("/api/articles?sort_by=topic&order=desc")
         .expect(200)
         .then((res) => {
           expect(res.body.articles).toBeSortedBy("topic", {
             descending: true,
+          });
+        });
+    });
+    it("GET: 200: sort article by author in ascendong order", () => {
+      return request(app)
+        .get("/api/articles?sort_by=author")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("author", {
+            descending: true,
+          });
+        });
+    });
+    it.only("GET: 200: order article by ascending order", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            ascending: true,
           });
         });
     });

@@ -3,7 +3,7 @@ const { returning } = require("../db/connection");
 
 exports.getAllArticles = ({
   sort_by = "created_at",
-  order = "asc",
+  order = "desc",
   author,
   topic,
 }) => {
