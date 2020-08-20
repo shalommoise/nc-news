@@ -15,9 +15,6 @@ exports.PSQLerrorHandler = (err, req, res, next) => {
     next(err);
   }
 };
-exports.methodsErrorHandler = (err, req, res, next) => {
-  return res.status(405).send({ msg: "method not allowed" }).catch(next);
-};
 
 exports.serverErrorHandler = (err, req, res, next) => {
   console.log(err);

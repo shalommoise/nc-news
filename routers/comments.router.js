@@ -1,5 +1,5 @@
 const app = require("../app");
-const { methodsErrorHandler } = require("../errors");
+
 const commentsRouter = require("express").Router();
 const {
   patchCommentByVote,
@@ -13,6 +13,8 @@ commentsRouter
 
 commentsRouter.get("/", getAllComments);
 
-commentsRouter.all(methodsErrorHandler);
+commentsRouter.all("*", (req, res, next) => {
+  res.status(405).send({ msg: "method not allowed" });
+});
 
 module.exports = commentsRouter;

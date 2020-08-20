@@ -33,19 +33,11 @@ exports.getCommentsByArticleId = (
           .from("articles")
           .where("article_id", article_id)
           .then((res) => {
-            if (res.length === 0) {
-              return Promise.reject({
-                status: 404,
-                msg: "article not found",
-              });
-            } else
-              return Promise.reject({
-                status: 200,
-                msg: "article has no comments",
-              });
+            if (res.length === 0)
+              return Promise.reject({ status: 404, msg: "article not found" });
+            else return [];
           });
       }
-
       return res;
     });
 };

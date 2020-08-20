@@ -19,13 +19,10 @@ exports.getAllArticles = ({
       else if (topic) query.where("articles.topic", topic);
     })
     .then((res) => {
-      if (res.length === 0)
-        return Promise.reject({ status: 404, msg: "No articles found" });
-      else
-        return res.map((article) => {
-          article.comment_count = Number(article.comment_count);
-          return article;
-        });
+      return res.map((article) => {
+        article.comment_count = Number(article.comment_count);
+        return article;
+      });
     });
 };
 
@@ -41,18 +38,19 @@ exports.getArticleById = (article_id) => {
       if (res.length === 0)
         return Promise.reject({ status: 404, msg: "article not found" });
       res[0].comment_count = Number(res[0].comment_count);
-
       return res;
     });
 };
 
 exports.patchArticleVote = (article_id, newVote) => {
-  if (typeof newVote.inc_votes !== "number") newVote.inc_votes = 0;
   return connection("articles")
     .where("article_id", article_id)
     .increment("votes", newVote.inc_votes)
     .returning("*")
     .then((res) => {
+      if (typeof newVote.inc_votes !== "number") {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+      }
       return res;
     });
 };

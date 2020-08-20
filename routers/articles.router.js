@@ -1,5 +1,5 @@
 const articlesRouter = require("express").Router();
-const { methodsErrorHandler } = require("../errors");
+
 const {
   sendAllArticles,
   sendArticleById,
@@ -23,5 +23,7 @@ articlesRouter
   .post(postComment)
   .get(sendCommentsByArticleId);
 
-articlesRouter.all(methodsErrorHandler);
+articlesRouter.all("*", (req, res, next) => {
+  res.status(405).send({ msg: "method not allowed" });
+});
 module.exports = articlesRouter;

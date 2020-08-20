@@ -1,7 +1,9 @@
 const topicsRouter = require("express").Router();
 const { sendTopics } = require("../controllers/topics.controller");
-const { methodsErrorHandler } = require("../errors");
+
 topicsRouter.get("/", sendTopics);
 
-topicsRouter.all(methodsErrorHandler);
+topicsRouter.all("*", (req, res, next) => {
+  res.status(405).send({ msg: "method not allowed" });
+});
 module.exports = topicsRouter;

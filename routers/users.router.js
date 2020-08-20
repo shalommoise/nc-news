@@ -3,8 +3,10 @@ const {
   sendUsers,
   sendUsersByUsername,
 } = require("../controllers/users.controller");
-const { methodsErrorHandler } = require("../errors");
+
 usersRouter.get("/", sendUsers);
 usersRouter.get("/:username", sendUsersByUsername);
-usersRouter.all(methodsErrorHandler);
+usersRouter.all("*", (req, res, next) => {
+  res.status(405).send({ msg: "method not allowed" });
+});
 module.exports = usersRouter;

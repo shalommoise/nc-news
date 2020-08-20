@@ -70,7 +70,7 @@ describe("/api", () => {
       });
     });
   });
-  describe.only("/articles", () => {
+  describe("/articles", () => {
     it("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")
@@ -104,6 +104,23 @@ describe("/api", () => {
             );
           });
       });
+      it("GET: 200: returns specific article based on article_id", () => {
+        return request(app)
+          .get("/api/articles/1")
+          .expect(200)
+          .then((res) => {
+            console.log(res.body.article.article[0].comment_count);
+            expect(res.body.article.article[0].article_id).toBe(1);
+          });
+      });
+      it("GET: 200: returns specific article based on article_id", () => {
+        return request(app)
+          .get("/api/articles/2")
+          .expect(200)
+          .then((res) => {
+            expect(res.body.article.article[0].article_id).toBe(2);
+          });
+      });
       it("GET: 200: returns sepcific article with comment_count", () => {
         return request(app)
           .get("/api/articles/5")
@@ -116,21 +133,21 @@ describe("/api", () => {
             );
           });
       });
-      it("PATCH: 200: updates the votes item in the article", () => {
-        const newVote = { inc_votes: 20 };
+      it("PATCH: 101: updates the votes item in the article", () => {
+        const newVote = { inc_votes: 1 };
         return request(app)
-          .patch("/api/articles/5")
+          .patch("/api/articles/1")
           .send(newVote)
           .expect(200)
           .then((res) => {
-            expect(res.body.article[0].votes).toEqual(20);
+            expect(res.body.article.article[0].votes).toEqual(101);
 
-            expect(res.body.article[0]).toEqual(
+            expect(res.body.article.article[0]).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
                 title: expect.any(String),
                 body: expect.any(String),
-                votes: 20,
+                votes: 101,
                 topic: expect.any(String),
                 author: expect.any(String),
                 created_at: expect.any(String),
@@ -138,7 +155,7 @@ describe("/api", () => {
             );
           });
       });
-      describe(":article_id errors", () => {
+      describe("/:article_id errors", () => {
         it("Not found: 404: article_id does not exist", () => {
           return request(app)
             .get("/api/articles/15")
@@ -155,14 +172,24 @@ describe("/api", () => {
               expect(res.body.msg).toBe("bad request");
             });
         });
-        it("PATCH ERR, inc_votes is not a number, defaults to add to 0", () => {
-          const newVote = { inc_votes: "twenty" };
+        it("PATCH ERR, inc_votes empty, defaults to add to 0", () => {
+          const newVote = { inc_votes: "" };
           return request(app)
-            .patch("/api/articles/5")
+            .patch("/api/articles/1")
             .send(newVote)
             .expect(200)
             .then((res) => {
-              expect(res.body.article[0].votes).toEqual(0);
+              expect(res.body.article.article[0].votes).toEqual(100);
+            });
+        });
+        it("PATCH ERR 400, inc_votes is not a number", () => {
+          const newVote = { inc_votes: "100" };
+          return request(app)
+            .patch("/api/articles/1")
+            .send(newVote)
+            .expect(400)
+            .then((res) => {
+              expect(res.body.msg).toBe("Bad Request");
             });
         });
         it("Method error: 405: try to delete or put an article", () => {
@@ -223,7 +250,9 @@ describe("/api", () => {
             .get("/api/articles/1/comments")
             .expect(200)
             .then((res) => {
-              expect(res.body.comments).toBeSortedBy("created_at");
+              expect(res.body.comments).toBeSortedBy("created_at", {
+                descending: true,
+              });
             });
         });
         it("GET: 200: comments by article_id, sorted by any valid column", () => {
@@ -244,6 +273,24 @@ describe("/api", () => {
               });
             });
         });
+        it("GET: 200: comments by article_id, sorted by votes", () => {
+          return request(app)
+            .get("/api/articles/1/comments?sort_by=votes")
+            .expect(200)
+            .then((res) => {
+              expect(res.body.comments).toBeSortedBy("votes", {
+                descending: true,
+              });
+            });
+        });
+        it.only("GET: 200: empty array for article with no comments", () => {
+          return request(app)
+            .get("/api/articles/2/comments")
+            .expect(200)
+            .then((res) => {
+              expect(res.body.comments.comments).toEqual([]);
+            });
+        });
         describe("comments errors", () => {
           it("POST error, missing username", () => {
             return request(app)
@@ -262,15 +309,8 @@ describe("/api", () => {
                 expect(res.body.msg).toBe("column not valid");
               });
           });
-          it("200, article has no comments", () => {
-            return request(app)
-              .get("/api/articles/3/comments")
-              .expect(200)
-              .then((res) => {
-                expect(res.body.msg).toBe("article has no comments");
-              });
-          });
-          it("404, article does not exist", () => {
+
+          it.only("404, article does not exist", () => {
             return request(app)
               .get("/api/articles/20/comments")
               .expect(404)
@@ -332,7 +372,7 @@ describe("/api", () => {
           });
         });
     });
-    it.only("GET: 200: order article by ascending order", () => {
+    it("GET: 200: order article by ascending order", () => {
       return request(app)
         .get("/api/articles?order=asc")
         .expect(200)
@@ -364,6 +404,22 @@ describe("/api", () => {
           });
         });
     });
+    it("GET: 200: returns empty array for author that does not exist", () => {
+      return request(app)
+        .get("/api/articles?author=lurker")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBe(0);
+        });
+    });
+    it("GET: 200: returns empty array for topic that does not exist", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBe(0);
+        });
+    });
     describe("/articles errors", () => {
       it("Bad request: 400: filter by query that does not exist", () => {
         return request(app)
@@ -379,6 +435,14 @@ describe("/api", () => {
           .expect(400)
           .then((res) => {
             expect(res.body.msg).toBe("invalid search column");
+          });
+      });
+      it("Patch Method Error: 405", () => {
+        return request(app)
+          .patch("/api/articles")
+          .expect(405)
+          .then((res) => {
+            expect(res.body.msg).toBe("method not allowed");
           });
       });
     });

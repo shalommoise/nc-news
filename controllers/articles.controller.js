@@ -17,7 +17,7 @@ exports.sendArticleById = (req, res, next) => {
 
   getArticleById(article_id)
     .then((article) => {
-      res.send({ article });
+      res.send({ article: { article } });
     })
     .catch(next);
 };
@@ -28,7 +28,7 @@ exports.updateArticleVote = (req, res, next) => {
 
   patchArticleVote(article_id, newVote)
     .then((article) => {
-      res.send({ article });
+      res.status(200).send({ article: { article } });
     })
     .catch(next);
 };

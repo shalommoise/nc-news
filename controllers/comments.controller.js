@@ -24,7 +24,7 @@ exports.sendCommentsByArticleId = (req, res, next) => {
 
   getCommentsByArticleId(article_id, sort_by, order)
     .then((comments) => {
-      res.send({ comments });
+      res.send({ comments: { comments } });
     })
     .catch(next);
 };
