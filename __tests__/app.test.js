@@ -15,7 +15,7 @@ describe("/api", () => {
       });
   });
   describe("/topics", () => {
-    it("GET: 200: return full topics table", () => {
+    it.only("GET: 200: return full topics table", () => {
       return request(app)
         .get("/api/topics/")
         .expect(200)
