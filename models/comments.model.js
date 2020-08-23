@@ -11,8 +11,8 @@ exports.makeComment = (article_id, comment) => {
     .returning("*")
     .then((res) => {
       if (res[0].author === null)
-        return Promise.reject({ status: 406, msg: "missing user information" });
-      return res;
+        return Promise.reject({ status: 400, msg: "bad request" });
+      return res[0];
     });
 };
 
@@ -42,14 +42,17 @@ exports.getCommentsByArticleId = (
     });
 };
 
-exports.updateCommentByVote = (comment_id, inc_votes) => {
-  if (typeof inc_votes !== "number") inc_votes = 0;
+exports.updateCommentByVote = (comment_id, inc_votes = 0) => {
   return connection("comments")
     .where("comment_id", comment_id)
     .increment("votes", inc_votes)
     .returning("*")
     .then((res) => {
-      return res;
+      if (res.length === 0)
+        return Promise.reject({ status: 404, msg: "comment not found" });
+      if (typeof inc_votes !== "number")
+        return Promise.reject({ status: 400, msg: "bad request" });
+      return res[0];
     });
 };
 

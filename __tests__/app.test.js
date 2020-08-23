@@ -50,7 +50,7 @@ describe("/api", () => {
           .get("/api/users/butter_bridge")
           .expect(200)
           .then((res) => {
-            expect(res.body.user[0]).toEqual({
+            expect(res.body.user.user).toEqual({
               username: "butter_bridge",
               avatar_url:
                 "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
@@ -67,6 +67,9 @@ describe("/api", () => {
           .then((res) => {
             expect(res.body).toEqual({ msg: "User not found" });
           });
+      });
+      it("Method Error: 405: PUT", () => {
+        return request(app).put("/api/users/butter_bridge").expect(405);
       });
     });
   });
@@ -109,7 +112,6 @@ describe("/api", () => {
           .get("/api/articles/1")
           .expect(200)
           .then((res) => {
-            console.log(res.body.article.article[0].comment_count);
             expect(res.body.article.article[0].article_id).toBe(1);
           });
       });
@@ -212,7 +214,7 @@ describe("/api", () => {
             .send({ username: "rogersop", body: "Great article!" })
             .expect(201)
             .then((res) => {
-              expect(res.body.comment[0]).toEqual(
+              expect(res.body.comment).toEqual(
                 expect.objectContaining({
                   article_id: 5,
                   author: "rogersop",
@@ -283,7 +285,7 @@ describe("/api", () => {
               });
             });
         });
-        it.only("GET: 200: empty array for article with no comments", () => {
+        it("GET: 200: empty array for article with no comments", () => {
           return request(app)
             .get("/api/articles/2/comments")
             .expect(200)
@@ -296,9 +298,18 @@ describe("/api", () => {
             return request(app)
               .post("/api/articles/5/comments")
               .send({ body: "Great article!" })
-              .expect(406)
+              .expect(400)
               .then((res) => {
-                expect(res.body.msg).toBe("missing user information");
+                expect(res.body.msg).toBe("bad request");
+              });
+          });
+          it("POST error, article not found", () => {
+            return request(app)
+              .post("/api/articles/1000/comments")
+              .send({ body: "Great article!" })
+              .expect(404)
+              .then((res) => {
+                expect(res.body.msg).toBe("article not found");
               });
           });
           it("GET error, sort comments by column that does not exist", () => {
@@ -310,7 +321,7 @@ describe("/api", () => {
               });
           });
 
-          it.only("404, article does not exist", () => {
+          it("404, article does not exist", () => {
             return request(app)
               .get("/api/articles/20/comments")
               .expect(404)
@@ -448,13 +459,13 @@ describe("/api", () => {
     });
   });
   describe("comments/:comment_id", () => {
-    it("PATCH 200: updtes the votes item in the comments", () => {
+    it("PATCH 200: updates the votes item in the comments", () => {
       return request(app)
         .patch("/api/comments/2")
         .send({ inc_votes: -2 })
         .expect(200)
         .then((res) => {
-          expect(res.body.comment[0].votes).toBe(12);
+          expect(res.body.comment.votes).toBe(12);
         });
     });
     it("GET: 200: returns list of all comments", () => {
@@ -494,23 +505,71 @@ describe("/api", () => {
     });
 
     describe("comments/:comment_id errors", () => {
-      it("Not found: 404: try to delete a comment that does not exist", () => {
+      it("DELETE ERR Not found: 404: try to delete a comment that does not exist", () => {
         return request(app)
-          .del("/api/comments/19")
+          .del("/api/comments/1000")
           .expect(404)
           .then((res) => {
             expect(res.body.msg).toBe("comment not found");
           });
       });
-      it("PATCH ERR, try to change vote by a non-number, defaults to add by 0", () => {
+      it("PATCH ERR Not found: 404: try to delete a comment that does not exist", () => {
+        return request(app)
+          .patch("/api/comments/1000")
+          .send({ inc_votes: 12 })
+          .expect(404)
+          .then((res) => {
+            expect(res.body.msg).toBe("comment not found");
+          });
+      });
+      it("PATCH ERR: 400: try to change vote by a non-number", () => {
         return request(app)
           .patch("/api/comments/2")
           .send({ inc_votes: "thirty" })
-          .expect(200)
+          .expect(400)
           .then((res) => {
-            expect(res.body.comment[0].votes).toBe(14);
+            expect(res.body.msg).toBe("bad request");
           });
       });
+      it("PATCH ERR, no inc_Votes, returns comment unchamged", () => {
+        return request(app)
+          .patch("/api/comments/2")
+
+          .expect(200)
+          .then((res) => {
+            expect(res.body.comment.votes).toBe(14);
+          });
+      });
+      it("Method Error: 405: PUT", () => {
+        return request(app).put("/api/comments/1").expect(405);
+      });
+    });
+  });
+  it.only("GET 200", () => {
+    return request(app)
+      .get("/api")
+      .then((res) => {
+        expect(res.body["nc-news"]).toEqual({
+          api: {
+            topics: { GET: "/" },
+            users: { GET: ["/", "/:username"] },
+            articles: [
+              { GET: ["/", "/:article_id", "/:article_id/comments"] },
+              { PATCH: "/:article_id" },
+              { POST: "/:article_id/comments" },
+            ],
+            comments: {
+              GET: "/",
+              PATCH: "/:comment_id",
+              DELETE: "/:comment_id",
+            },
+          },
+        });
+      });
+  });
+  describe("/api errors", () => {
+    it("Method Error: 405: DELETE", () => {
+      return request(app).del("/api").expect(405);
     });
   });
 });
