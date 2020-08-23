@@ -12,7 +12,7 @@ apiRouter.use("/articles", articlesRouter);
 apiRouter.use("/comments", commentsRouter);
 
 apiRouter.get("/", getInfo);
-apiRouter.all("*", (req, res, next) => {
+apiRouter.all("/", (req, res, next) => {
   res.status(405).send({ msg: "method not allowed" });
 });
 module.exports = apiRouter;

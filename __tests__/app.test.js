@@ -101,8 +101,8 @@ describe("/api", () => {
           .get("/api/articles/5")
           .expect(200)
           .then((res) => {
-            expect(res.body.article[0].article_id).toBe(5);
-            expect(res.body.article[0].title).toBe(
+            expect(res.body.article.article.article_id).toBe(5);
+            expect(res.body.article.article.title).toBe(
               "UNCOVERED: catspiracy to bring down democracy"
             );
           });
@@ -112,7 +112,7 @@ describe("/api", () => {
           .get("/api/articles/1")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article[0].article_id).toBe(1);
+            expect(res.body.article.article.article_id).toBe(1);
           });
       });
       it("GET: 200: returns specific article based on article_id", () => {
@@ -120,7 +120,7 @@ describe("/api", () => {
           .get("/api/articles/2")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article[0].article_id).toBe(2);
+            expect(res.body.article.article.article_id).toBe(2);
           });
       });
       it("GET: 200: returns sepcific article with comment_count", () => {
@@ -128,7 +128,7 @@ describe("/api", () => {
           .get("/api/articles/5")
           .expect(200)
           .then((res) => {
-            expect(res.body.article[0]).toEqual(
+            expect(res.body.article.article).toEqual(
               expect.objectContaining({
                 comment_count: expect.any(Number),
               })
@@ -142,19 +142,7 @@ describe("/api", () => {
           .send(newVote)
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article[0].votes).toEqual(101);
-
-            expect(res.body.article.article[0]).toEqual(
-              expect.objectContaining({
-                article_id: expect.any(Number),
-                title: expect.any(String),
-                body: expect.any(String),
-                votes: 101,
-                topic: expect.any(String),
-                author: expect.any(String),
-                created_at: expect.any(String),
-              })
-            );
+            expect(res.body.article.article.votes).toEqual(101);
           });
       });
       describe("/:article_id errors", () => {
@@ -175,13 +163,11 @@ describe("/api", () => {
             });
         });
         it("PATCH ERR, inc_votes empty, defaults to add to 0", () => {
-          const newVote = { inc_votes: "" };
           return request(app)
             .patch("/api/articles/1")
-            .send(newVote)
             .expect(200)
             .then((res) => {
-              expect(res.body.article.article[0].votes).toEqual(100);
+              expect(res.body.article.article.votes).toEqual(100);
             });
         });
         it("PATCH ERR 400, inc_votes is not a number", () => {
@@ -226,13 +212,13 @@ describe("/api", () => {
               );
             });
         });
-        it("GET: 200, recieves specific comments", () => {
+        it("GET: 200, recieves specific comments by article_id", () => {
           return request(app)
             .get("/api/articles/5/comments")
             .expect(200)
             .then((res) => {
-              expect(res.body.comments.length).toBeGreaterThan(0);
-              res.body.comments.forEach((comment) => {
+              expect(res.body.comments.comments.length).toBeGreaterThan(0);
+              res.body.comments.comments.forEach((comment) => {
                 expect(comment).toEqual(
                   expect.objectContaining({
                     comment_id: expect.any(Number),
@@ -432,22 +418,6 @@ describe("/api", () => {
         });
     });
     describe("/articles errors", () => {
-      it("Bad request: 400: filter by query that does not exist", () => {
-        return request(app)
-          .get("/api/articles?topic=notatopic")
-          .expect(404)
-          .then((res) => {
-            expect(res.body.msg).toBe("No articles found");
-          });
-      });
-      it("Bad request: 400: filter by column that does not exist", () => {
-        return request(app)
-          .get("/api/articles?au=butter_bridge")
-          .expect(400)
-          .then((res) => {
-            expect(res.body.msg).toBe("invalid search column");
-          });
-      });
       it("Patch Method Error: 405", () => {
         return request(app)
           .patch("/api/articles")
@@ -545,7 +515,7 @@ describe("/api", () => {
       });
     });
   });
-  it.only("GET 200", () => {
+  it("GET: 200: returns JSON describing available endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {

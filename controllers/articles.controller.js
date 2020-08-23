@@ -24,9 +24,8 @@ exports.sendArticleById = (req, res, next) => {
 
 exports.updateArticleVote = (req, res, next) => {
   const { article_id } = req.params;
-  const newVote = req.body;
-
-  patchArticleVote(article_id, newVote)
+  const { inc_votes } = req.body;
+  patchArticleVote(article_id, inc_votes)
     .then((article) => {
       res.status(200).send({ article: { article } });
     })

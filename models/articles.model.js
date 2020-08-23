@@ -38,19 +38,19 @@ exports.getArticleById = (article_id) => {
       if (res.length === 0)
         return Promise.reject({ status: 404, msg: "article not found" });
       res[0].comment_count = Number(res[0].comment_count);
-      return res;
+      return res[0];
     });
 };
 
-exports.patchArticleVote = (article_id, newVote) => {
+exports.patchArticleVote = (article_id, inc_votes = 0) => {
   return connection("articles")
     .where("article_id", article_id)
-    .increment("votes", newVote.inc_votes)
+    .increment("votes", inc_votes)
     .returning("*")
     .then((res) => {
-      if (typeof newVote.inc_votes !== "number") {
+      if (typeof inc_votes !== "number") {
         return Promise.reject({ status: 400, msg: "Bad Request" });
       }
-      return res;
+      return res[0];
     });
 };
