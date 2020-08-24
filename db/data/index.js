@@ -5,6 +5,6 @@ const developmentData = require("./development-data");
 const data = {
   test: testData,
   development: developmentData,
-  production: development,
+  production: developmentData,
 };
 module.exports = data[ENV];
