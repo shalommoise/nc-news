@@ -21,7 +21,7 @@ Users and topics are parents; articles is a child of both users and topics; comm
 ## Testing
 
 - [Jest](https://jestjs.io/) - "Delightful JavaScript testing"
-- [supertest module] (https://www.npmjs.com/package/supertest) - "HTTP assertions made easy via superagent."
+- [supertest module](https://www.npmjs.com/package/supertest) - "HTTP assertions made easy via superagent."
 
 ## Available endpoints [API](https://nc-news-shalom.herokuapp.com/api/)
 
