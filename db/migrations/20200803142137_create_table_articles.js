@@ -5,6 +5,7 @@ exports.up = function (knex) {
     articlesTable.string("title").notNullable();
     articlesTable.text("body").notNullable();
     articlesTable.integer("votes").defaultsTo(0);
+    articlesTable.integer("comment_count").defaultsTo(0);
     articlesTable.string("topic").references("topics.slug");
     articlesTable.string("author").references("users.username").notNullable();
     articlesTable.timestamp("created_at").defaultTo(knex.fn.now());

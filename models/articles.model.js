@@ -54,3 +54,13 @@ exports.patchArticleVote = (article_id, inc_votes = 0) => {
       return res[0];
     });
 };
+
+exports.createArticle = ({title, body, topic, author} )=>{
+  return connection
+  .insert({title, body, author, topic})
+  .into("articles")
+  .returning("*")
+  .then((res)=>{
+   return res[0]
+  })
+}

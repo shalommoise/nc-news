@@ -2,6 +2,7 @@ const {
   getAllArticles,
   getArticleById,
   patchArticleVote,
+  createArticle
 } = require("../models/articles.model");
 
 exports.sendAllArticles = (req, res, next) => {
@@ -31,3 +32,12 @@ exports.updateArticleVote = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.postArticle = (req,res,next)=>{
+   createArticle(req.body)
+  .then((article)=>{
+ res.status(201).send({ article });
+})
+.catch(next);
+
+}

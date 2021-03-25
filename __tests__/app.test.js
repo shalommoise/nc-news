@@ -1,7 +1,7 @@
 const request = require("supertest");
-const app = require("../app");
+const {app} = require("../app");
 const connection = require("../db/connection");
-const { intersect } = require("../db/connection");
+
 
 describe("/api", () => {
   beforeEach(() => connection.seed.run());
@@ -15,7 +15,7 @@ describe("/api", () => {
       });
   });
   describe("/topics", () => {
-    it.only("GET: 200: return full topics table", () => {
+    it("GET: 200: return full topics table", () => {
       return request(app)
         .get("/api/topics/")
         .expect(200)
@@ -50,7 +50,7 @@ describe("/api", () => {
           .get("/api/users/butter_bridge")
           .expect(200)
           .then((res) => {
-            expect(res.body.user.user).toEqual({
+            expect(res.body.user).toEqual({
               username: "butter_bridge",
               avatar_url:
                 "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
@@ -135,7 +135,7 @@ describe("/api", () => {
             );
           });
       });
-      it("PATCH: 101: updates the votes item in the article", () => {
+      it("PATCH: 200: updates the votes item in the article", () => {
         const newVote = { inc_votes: 1 };
         return request(app)
           .patch("/api/articles/1")
@@ -145,6 +145,23 @@ describe("/api", () => {
             expect(res.body.article.article.votes).toEqual(101);
           });
       });
+      it("POST 201 new article", ()=>{
+        const newArticle = {title: "Making databases", body: "The tricky part about databases is in maintaining them. You can build a perfectly good api... and then a few months later... some random update just stops it from working!",topic: "mitch", author: "butter_bridge" }
+        return request(app)
+        .post("/api/articles/")
+        .send(newArticle)
+        .expect(201)
+        .then((res)=>{
+          const {title, body, topic, author, article_id, comment_count, votes, created_at} = res.body.article
+           expect(article_id).toBe(13);
+          expect(title).toBe("Making databases");
+          expect(body).toBe(newArticle.body);
+          expect(author).toBe("butter_bridge");
+          expect(topic).toBe("mitch");
+          expect(votes).toBe(0);
+          expect(comment_count).toBe(0);
+        })
+      })
       describe("/:article_id errors", () => {
         it("Not found: 404: article_id does not exist", () => {
           return request(app)
