@@ -171,7 +171,7 @@ describe("/api", () => {
               expect(res.body.msg).toBe("article not found");
             });
         });
-        it("Not found: 404:, invalid article_id", () => {
+        it("Bad Request: 400: invalid article_id", () => {
           return request(app)
             .get("/api/articles/lion")
             .expect(400)
@@ -179,6 +179,26 @@ describe("/api", () => {
               expect(res.body.msg).toBe("bad request");
             });
         });
+        it("Not found: 404: Post article with unkonwn user", () => {
+          const newArticle = {title: "Errors", body: "Love some good error handling",topic: "mitch", author: "noOne" }
+          return request(app)
+            .post("/api/articles")
+            .send(newArticle)
+            .expect(404)
+            .then((res) => {
+              expect(res.body.msg).toBe("User not found");
+            });
+        });
+        // it.only("Not found: 404: Post article with unkonwn user", () => {
+        //   const newArticle = {title: "Errors", body: "Love some good error handling",topic: "notATopic", author: "butter_bridge" }
+        //   return request(app)
+        //     .post("/api/articles")
+        //     .send(newArticle)
+        //     .expect(404)
+        //     .then((res) => {
+        //       expect(res.body.msg).toBe("Topic not Found");
+        //     });
+        // });
         it("PATCH ERR, inc_votes empty, defaults to add to 0", () => {
           return request(app)
             .patch("/api/articles/1")

@@ -1,6 +1,6 @@
 const connection = require("../db/connection");
 const { returning } = require("../db/connection");
-
+const {getUsersByUsername}= require("./users.model")
 exports.getAllArticles = ({
   sort_by = "created_at",
   order = "desc",
@@ -56,11 +56,15 @@ exports.patchArticleVote = (article_id, inc_votes = 0) => {
 };
 
 exports.createArticle = ({title, body, topic, author} )=>{
+  const checkUser = getUsersByUsername(author);
+return  Promise.all([checkUser]).then(()=>{
   return connection
   .insert({title, body, author, topic})
   .into("articles")
   .returning("*")
   .then((res)=>{
    return res[0]
-  })
+ })
+  });
+
 }
