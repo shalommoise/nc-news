@@ -11,7 +11,7 @@ exports.sendUsersByUsername = (req, res, next) => {
 
   getUsersByUsername(username)
     .then((user) => {
-      res.send({ user: { user } });
+      res.send({ user });
     })
     .catch(next);
 };
