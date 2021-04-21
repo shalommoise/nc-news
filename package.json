@@ -5,15 +5,8 @@
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
-    "migrate-make": "knex migrate:make",
-    "migrate-latest": "knex migrate:latest",
-    "migrate-rollback": "knex migrate:rollback",
-    "unlock": "knex migrate:unlock",
-    "seed": "knex seed:run",
+    "seed": "node ./db/run-seed.js",
     "test": "jest --watch",
-    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run",
-    "migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
-    "migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback",
     "start": "node listen.js"
   },
   "jest": {
@@ -35,8 +28,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "knex": "^0.21.2",
-    "pg": "^8.3.0"
+    "pg": "^8.6.0"
   },
   "devDependencies": {
     "jest": "^26.2.2",

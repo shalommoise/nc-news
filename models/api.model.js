@@ -1,4 +1,4 @@
-const { getUsers } = require("./users.model");
+
 const connection = require("../db/connection");
 exports.sendInfo = () => {
   return connection
