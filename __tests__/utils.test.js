@@ -2,9 +2,10 @@ const {
   formatDates,
   makeRefObj,
   formatComments,
+  changeDateToSQLFrom
 } = require("../db/utils/utils");
 
-describe.only("formatDates", () => {
+describe("formatDates", () => {
   it("returns an empty array when list is empty", () => {
     const list = [];
     expect(formatDates(list)).toEqual([]);
@@ -15,6 +16,7 @@ describe.only("formatDates", () => {
         created_at: 1471522072389,
       },
     ];
+   
     expect(formatDates(list)[0].created_at).toBeInstanceOf(Date);
   });
   it("returns an array with multiple object with the timestamp changed to javascript form", () => {
@@ -157,3 +159,15 @@ describe("formatComments", () => {
     expect(formatted).toEqual(expectedOutput);
   });
 });
+describe.only("changeDateToSQLFrom()", ()=>{
+  test('returns empty str when input is empty', () => {
+    expect(changeDateToSQLFrom('')).toBe('');
+  });
+  test.only('return str to SQL from', ()=>{
+            // '2018-11-15T12:21:54.171Z'
+    const sqlDate = '2018-11-15 12:21:54.171';
+    const currentDate =   formatDates([{ created_at: 1542284514171}])[0].created_at;
+    
+    expect(changeDateToSQLFrom(currentDate)).toBe(sqlDate)
+  })
+})
