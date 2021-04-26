@@ -15,23 +15,31 @@ exports.seed = function (topicData, articleData, commentData, userData) {
     const descriptions = topicData.map((datum)=> datum.description); 
     const insertTopics = (n) => client.query(`INSERT INTO topics (slug, description) VALUES ('${slugs[n]}' , '${descriptions[n]}');`)
     .then(()=>n < slugs.length - 1 && insertTopics(n + 1))
-      // return insertTopics(0);
    const usernames = userData.map((datum)=> datum.username);
    const names = userData.map((datum)=> datum.name);
    const avatar_urls = userData.map((datum)=> datum.avatar_url);
      const insertUsers = (n) => client.query(`INSERT INTO users (username, name, avatar_url) VALUES ('${usernames[n]}' , '${names[n]}', '${avatar_urls[n]}');`)
-     .then(()=>n < slugs.length - 1 && insertUsers(n + 1))
+     .then(()=>n < slugs.length - 1 && insertUsers(n + 1));
       return Promise.all([insertTopics(0), insertUsers(0)]).then(() => {
-        console.log("done")
-      //   const formattedArticlesTimes = formatDates(articleData);
-      //   return client.query(`INSERT INTO articles ${formattedArticlesTimes}`);
-      // });
+       
+        const formattedArticlesTimes = formatDates(articleData);
+        const titles = formattedArticlesTimes.map((datum)=> datum.title);
+        const topics = formattedArticlesTimes.map((datum)=> datum.topic);
+        const authors = formattedArticlesTimes.map((datum)=> datum.author);
+        const bodies = formattedArticlesTimes.map((datum)=> datum.body);
+        const times = formattedArticlesTimes.map((datum)=> datum.created_at);
+    
+      const insertArticles = (n)=> client.query(`INSERT INTO articles (title, topic, author, body, created_at) VALUES ('${titles[n]}', '${topics[n]}', '${authors[n]}','${bodies[n]}', '${times[n]}')`)
+      .then(()=>n < formattedArticlesTimes.length - 1 && insertArticles(n + 1));
+      return insertArticles(0);
  })
-// .then((articleRows) => {
-//       const articleRef = makeRefObj(articleRows);
+.then((articleRows) => {
+console.log("done")
+  //       const articleRef = makeRefObj(articleRows);
 //       const newDates = formatDates(commentData);
 //       const formattedComments = formatComments(newDates, articleRef);
 //       return client.query(`INSERT INTO comments ${formattedComments}`);
+})
 })
 .catch((e)=>console.log("err: ", e))
 .finally(()=> client.end())
