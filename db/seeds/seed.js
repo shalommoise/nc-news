@@ -28,46 +28,33 @@ exports.seed = function (topicData, articleData, commentData, userData) {
         const authors = formattedArticlesTimes.map((datum)=> datum.author);
         const bodies = formattedArticlesTimes.map((datum)=> datum.body);
         const times = formattedArticlesTimes.map((datum)=> datum.created_at);
-    
-      const insertArticles = (n)=> client.query(`INSERT INTO articles (title, topic, author, body, created_at) VALUES ('${titles[n]}', '${topics[n]}', '${authors[n]}','${bodies[n]}', '${times[n]}')`)
+        const votes =  formattedArticlesTimes.map((datum)=> datum.votes ? datum.votes : 0);
+     
+      const insertArticles = (n)=> client.query(`INSERT INTO articles (title, topic, author, body, created_at, votes) VALUES ('${titles[n]}', '${topics[n]}', '${authors[n]}','${bodies[n]}', '${times[n]}', '${votes[n]}')`)
       .then(()=>n < formattedArticlesTimes.length - 1 && insertArticles(n + 1));
       return insertArticles(0);
  })
-.then((articleRows) => {
-console.log("done")
-  //       const articleRef = makeRefObj(articleRows);
-//       const newDates = formatDates(commentData);
-//       const formattedComments = formatComments(newDates, articleRef);
-//       return client.query(`INSERT INTO comments ${formattedComments}`);
+.then(() => {
+   const articles = ()=> client.query("SELECT * FROM articles")
+
+return  articles().then((res)=>{
+     const aritcleRows = res.rows;
+     const articleRef = makeRefObj(aritcleRows);  
+    const newDates = formatDates(commentData);
+   const formattedComments = formatComments(newDates, articleRef);
+
+   const authors = formattedComments.map((datum)=> datum.author);
+  const bodies = formattedComments.map((datum)=> datum.body);
+   const times = formattedComments.map((datum)=> datum.created_at);
+   const votes =formattedComments.map((datum)=>datum.votes);
+   const article_ids = formattedComments.map((datum)=>datum.article_id);
+   const insertComments =(n)=>{
+    return client.query(`INSERT INTO comments (author, article_id, votes, body, created_at) VALUES ('${authors[n]}', '${article_ids[n]}', '${votes[n]}','${bodies[n]}', '${times[n]}')`).then(()=>n < formattedComments.length - 1 && insertComments(n + 1))
+   }
+  return insertComments(0);
+})
 })
 })
 .catch((e)=>console.log("err: ", e))
 .finally(()=> client.end())
 };
-
- // add seeding functionality here
-  // this function should take as argument(s) all the data it needs to seed
-  // it should insert this data into the relevant tables in your database
-
-// exports.seed = function (knex) {
-//   return knex.migrate
-//     .rollback()
-//     .then(() => knex.migrate.latest())
-//     .then(() => {
-//       const topicsInsertions = knex("topics").insert(topicData).returning("*");
-//       const usersInsertions = knex("users").insert(userData).returning("*");
-
-//       return Promise.all([topicsInsertions, usersInsertions]).then(() => {
-//         const formattedArticlesTimes = formatDates(articleData);
-//         return knex("articles").insert(formattedArticlesTimes).returning("*");
-//       });
-//     })
-//     .then((articleRows) => {
-//       const articleRef = makeRefObj(articleRows);
-//       const newDates = formatDates(commentData);
-
-//       const formattedComments = formatComments(newDates, articleRef);
-
-//       return knex("comments").insert(formattedComments);
-//     });
-// };
