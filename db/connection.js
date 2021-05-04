@@ -10,7 +10,7 @@ const config = {
   database: test
 };
 
-const {Pool} = require('pg');
+const {Pool, Client} = require('pg');
 const pool = new Pool(config);
-
-module.exports = pool;
+const client = new Client(config)
+module.exports = {pool, client};

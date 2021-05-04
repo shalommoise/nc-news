@@ -1,4 +1,4 @@
-const pool = require("../connection.js");
+const {pool, client} = require("../connection.js");
 
 const { formatDates, formatComments, makeRefObj } = require("../utils/utils");
 
@@ -56,5 +56,5 @@ return  articles().then((res)=>{
 })
 })
 .catch((e)=>console.log("err: ", e))
-.finally(()=> pool.end())
+.finally(()=> client.end())
 };

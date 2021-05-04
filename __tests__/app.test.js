@@ -27,7 +27,7 @@ describe("/api", () => {
         });
     });
   });
-  describe.only("users", () => {
+  describe("users", () => {
     it("GET: 200: return full users table", () => {
       return request(app)
         .get("/api/users/")
@@ -74,7 +74,7 @@ describe("/api", () => {
       });
     });
   });
-  describe("/articles", () => {
+  describe.only("/articles", () => {
     it("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")

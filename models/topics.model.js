@@ -1,9 +1,13 @@
-const pool = require("../db/connection");
+const{ pool }= require("../db/connection");
 
-exports.getTopics = () =>
-   pool.connect()
+exports.getTopics = () =>{
+
+return   pool.connect()
   .then(()=>pool.query("SELECT * FROM topics;"))
- .then((res) => res.rows);
+ .then((res) => {
+   return res.rows
+}).catch((err)=>console.log(err))
+};
 
 
 
