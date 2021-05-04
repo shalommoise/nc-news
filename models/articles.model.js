@@ -1,30 +1,42 @@
-const connection = require("../db/connection");
-const { returning } = require("../db/connection");
+const {pool} = require("../db/connection");
+// const { returning } = require("../db/connection");
 const {getUsersByUsername}= require("./users.model")
+// exports.getAllArticles = ({
+//   sort_by = "created_at",
+//   order = "desc",
+//   author,
+//   topic,
+// }) => {
+//   return connection
+//     .select("articles.*")
+//     .from("articles")
+//     .join("comments", "articles.article_id", "comments.article_id")
+//     .groupBy("articles.article_id")
+//     .count("comments.comment_id", { as: "comment_count" })
+//     .orderBy(sort_by, order)
+//     .modify((query) => {
+//       if (author) query.where("articles.author", author);
+//       else if (topic) query.where("articles.topic", topic);
+//     })
+//     .then((res) => {
+//       return res.map((article) => {
+//         article.comment_count = Number(article.comment_count);
+//         return article;
+//       });
+//     });
+// };
 exports.getAllArticles = ({
   sort_by = "created_at",
   order = "desc",
   author,
   topic,
 }) => {
-  return connection
-    .select("articles.*")
-    .from("articles")
-    .join("comments", "articles.article_id", "comments.article_id")
-    .groupBy("articles.article_id")
-    .count("comments.comment_id", { as: "comment_count" })
-    .orderBy(sort_by, order)
-    .modify((query) => {
-      if (author) query.where("articles.author", author);
-      else if (topic) query.where("articles.topic", topic);
-    })
-    .then((res) => {
-      return res.map((article) => {
-        article.comment_count = Number(article.comment_count);
-        return article;
-      });
-    });
+  return pool.connect().then(
+    ()=> pool.query("SELECT * from articles JOIN comments ON 'articles.article_id'='comments.article_id';").then((res) => {
+   return res.rows
+}).catch((err)=>console.log(err)))
 };
+
 
 exports.getArticleById = (article_id) => {
   return connection

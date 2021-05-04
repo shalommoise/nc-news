@@ -356,12 +356,13 @@ describe("/api", () => {
         });
       });
     });
-    it("GET: 200: get comment count for articles", () => {
+    it.only("GET: 200: get comment count for articles", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
           res.body.articles.forEach((article) => {
+            console.log(article.comment_count)
             expect(article).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
