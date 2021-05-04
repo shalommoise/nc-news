@@ -10,3 +10,5 @@ const runSeed = async () => {
 };
 
 runSeed();
+
+module.exports = {runSeed}

@@ -1,8 +1,8 @@
-const client = require("../db/connection");
+const pool = require("../db/connection");
 
 exports.getTopics = () =>
-   client.connect()
-  .then(()=>client.query("SELECT * FROM topics;"))
+   pool.connect()
+  .then(()=>pool.query("SELECT * FROM topics;"))
  .then((res) => res.rows);
 
 

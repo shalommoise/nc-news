@@ -1,11 +1,11 @@
 const request = require("supertest");
 const {app} = require("../app");
-const connection = require("../db/connection");
-
+const pool = require("../db/connection");
+// const {runSeed} =require("../db/run-seed")
 
 describe("/api", () => {
-  beforeEach(() => connection.seed.run());
-  afterAll(() => connection.destroy());
+  // beforeEach(() => runSeed());
+  // afterAll(() => pool.destroy());
   it("All: 404 error from mispelling url", () => {
     return request(app)
       .get("/api/tpics/")
@@ -20,13 +20,14 @@ describe("/api", () => {
         .get("/api/topics/")
         .expect(200)
         .then((res) => {
+          console.log(res.body)
           res.body.topics.forEach((topic) =>
             expect(Object.keys(topic)).toEqual(["slug", "description"])
           );
         });
     });
   });
-  describe("users", () => {
+  describe.only("users", () => {
     it("GET: 200: return full users table", () => {
       return request(app)
         .get("/api/users/")
@@ -41,7 +42,7 @@ describe("/api", () => {
           );
 
           expect(res.body.users[0].name).toBe("jonny");
-          expect(res.body.users[3].name).toBe("do_nothing");
+          expect(res.body.users[2].name).toBe("paul");
         });
     });
     describe("/:username", () => {
