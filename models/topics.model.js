@@ -1,10 +1,17 @@
-const connection = require("../db/connection");
+const client = require("../db/connection");
 
-exports.getTopics = () => {
-  return connection
-    .select("*")
-    .from("topics")
-    .then((res) => {
-      return res;
+const getTopics = () =>
+   client.connect()
+  .then(()=>{
+  return  client.query("SELECT * FROM topics;")
+  })
+   .then((res) => {
+     const {rows} = res;
+     
+      return rows;
     });
-};
+
+
+module.exports = {getTopics}
+
+
