@@ -100,13 +100,13 @@ describe("/api", () => {
         });
     });
     describe("/:article_id", () => {
-      it("GET: 200: returns specific article based on article_id", () => {
+      it.only("GET: 200: returns specific article based on article_id", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.article_id).toBe(5);
-            expect(res.body.article.article.title).toBe(
+            expect(res.body.article.article_id).toBe(5);
+            expect(res.body.article.title).toBe(
               "UNCOVERED: catspiracy to bring down democracy"
             );
           });
@@ -359,7 +359,7 @@ describe("/api", () => {
         });
       });
     });
-    it.only("GET: 200: get comment count for articles", () => {
+    it("GET: 200: get comment count for articles", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)

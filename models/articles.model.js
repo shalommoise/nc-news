@@ -34,30 +34,32 @@ exports.getAllArticles = ({
   return pool.connect()
   .then(
     ()=> pool.query("SELECT articles.*, COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;").then((res) => {
-
-      // .groupBy("articles.article_id")
-//     .count("comments.comment_id", { as: "comment_count" })
-   return res.rows
+   return res.rows; 
 }).catch((err)=>console.log(err)))
 };
-//  JOIN comments ON 'articles.article_id'='comments.article_id'
 
+// exports.getArticleById = (article_id) => {
+//   return connection
+//     .select("articles.*")
+//     .from("articles")
+//     .leftJoin("comments", "articles.article_id", "comments.article_id")
+//     .groupBy("articles.article_id")
+//     .count("comments.comment_id", { as: "comment_count" })
+//     .where("articles.article_id", article_id)
+//     .then((res) => {
+//       if (res.length === 0)
+//         return Promise.reject({ status: 404, msg: "article not found" });
+//       res[0].comment_count = Number(res[0].comment_count);
+//       return res[0];
+//     });
+// };
 exports.getArticleById = (article_id) => {
-  return connection
-    .select("articles.*")
-    .from("articles")
-    .leftJoin("comments", "articles.article_id", "comments.article_id")
-    .groupBy("articles.article_id")
-    .count("comments.comment_id", { as: "comment_count" })
-    .where("articles.article_id", article_id)
-    .then((res) => {
-      if (res.length === 0)
-        return Promise.reject({ status: 404, msg: "article not found" });
-      res[0].comment_count = Number(res[0].comment_count);
-      return res[0];
-    });
+return pool.connect().then(()=>pool.query(`SELECT articles.* , COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = ${article_id} AND articles.article_id = comments.article_id  GROUP BY articles.article_id ;`)).then((res)=>{
+  return  res.rows[0]
+})
 };
-
+//, COUNT(articles.article_id) AS comment_count
+//JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;
 exports.patchArticleVote = (article_id, inc_votes = 0) => {
   return connection("articles")
     .where("article_id", article_id)

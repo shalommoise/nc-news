@@ -18,7 +18,7 @@ exports.sendArticleById = (req, res, next) => {
 
   getArticleById(article_id)
     .then((article) => {
-      res.send({ article: { article } });
+      res.send({  article });
     })
     .catch(next);
 };
