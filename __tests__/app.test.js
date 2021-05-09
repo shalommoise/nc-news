@@ -80,7 +80,8 @@ describe("/api", () => {
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
-          res.body.articles.forEach((article) =>
+          res.body.articles.forEach((article) =>{
+            totalCount += article.comment_count;
             expect(article).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
@@ -93,7 +94,9 @@ describe("/api", () => {
                 comment_count: expect.any(Number),
               })
             )
-          );
+          
+          }
+            );
         });
     });
     describe("/:article_id", () => {
@@ -361,8 +364,8 @@ describe("/api", () => {
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
+           let totalCount = 0;
           res.body.articles.forEach((article) => {
-            console.log(article.comment_count)
             expect(article).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
@@ -375,6 +378,7 @@ describe("/api", () => {
                 comment_count: expect.any(Number),
               })
             );
+             expect(totalCount).not.toBe(0)
           });
         });
     });

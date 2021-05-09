@@ -31,12 +31,16 @@ exports.getAllArticles = ({
   author,
   topic,
 }) => {
-  return pool.connect().then(
-    ()=> pool.query("SELECT * from articles JOIN comments ON 'articles.article_id'='comments.article_id';").then((res) => {
+  return pool.connect()
+  .then(
+    ()=> pool.query("SELECT articles.*, COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;").then((res) => {
+
+      // .groupBy("articles.article_id")
+//     .count("comments.comment_id", { as: "comment_count" })
    return res.rows
 }).catch((err)=>console.log(err)))
 };
-
+//  JOIN comments ON 'articles.article_id'='comments.article_id'
 
 exports.getArticleById = (article_id) => {
   return connection
