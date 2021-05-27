@@ -60,23 +60,28 @@ exports.getAllArticles = ({
 //     });
 // };
 exports.getArticleById = (article_id) => {
-return pool.connect().then(()=>pool.query(`SELECT articles.* , COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = ${article_id} AND articles.article_id = comments.article_id  GROUP BY articles.article_id ;`)).then((res)=>{
+   commentCountConverter();
+return pool.connect().then(()=>pool.query(`SELECT * FROM articles WHERE article_id = ${article_id};`)).then((res)=>{
   return  res.rows[0]
 })
 };
 //, COUNT(articles.article_id) AS comment_count
 //JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;
 exports.patchArticleVote = (article_id, inc_votes = 0) => {
-  return connection("articles")
-    .where("article_id", article_id)
-    .increment("votes", inc_votes)
-    .returning("*")
-    .then((res) => {
-      if (typeof inc_votes !== "number") {
-        return Promise.reject({ status: 400, msg: "Bad Request" });
-      }
-      return res[0];
-    });
+  return pool.connect()
+  .then(()=>pool.query(`UPDATE articles SET votes = votes + 1 WHERE article_id = '${article_id}' RETURNING *;`)).then((res)=>{
+    return res.rows[0];
+  })
+  // return connection("articles")
+  //   .where("article_id", article_id)
+  //   .increment("votes", inc_votes)
+  //   .returning("*")
+  //   .then((res) => {
+  //     if (typeof inc_votes !== "number") {
+  //       return Promise.reject({ status: 400, msg: "Bad Request" });
+  //     }
+  //     return res[0];
+  //   });
 };
 
 exports.createArticle = ({title, body, topic, author} )=>{

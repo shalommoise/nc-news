@@ -74,14 +74,15 @@ describe("/api", () => {
       });
     });
   });
-  describe.only("/articles", () => {
+  describe("/articles", () => {
     it("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
+         
           res.body.articles.forEach((article) =>{
-            totalCount += article.comment_count;
+         
             expect(article).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
@@ -100,7 +101,7 @@ describe("/api", () => {
         });
     });
     describe("/:article_id", () => {
-      it.only("GET: 200: returns specific article based on article_id", () => {
+      it("GET: 200: returns specific article based on article_id", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
@@ -116,7 +117,7 @@ describe("/api", () => {
           .get("/api/articles/1")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.article_id).toBe(1);
+            expect(res.body.article.article_id).toBe(1);
           });
       });
       it("GET: 200: returns specific article based on article_id", () => {
@@ -124,7 +125,7 @@ describe("/api", () => {
           .get("/api/articles/2")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.article_id).toBe(2);
+            expect(res.body.article.article_id).toBe(2);
           });
       });
       it("GET: 200: returns sepcific article with comment_count", () => {
@@ -132,22 +133,29 @@ describe("/api", () => {
           .get("/api/articles/5")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article).toEqual(
+            expect(res.body.article).toEqual(
               expect.objectContaining({
                 comment_count: expect.any(Number),
               })
             );
           });
       });
-      it("PATCH: 200: updates the votes item in the article", () => {
-        const newVote = { inc_votes: 1 };
+      it.only("PATCH: 200: updates the votes item in the article", () => {
+      
+        
+        return request(app)
+          .get("/api/articles/1").then((res)=>{
+            const oldVotes = res.body.article.votes;
+              const newVote = { inc_votes: 1 };
         return request(app)
           .patch("/api/articles/1")
           .send(newVote)
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.votes).toEqual(101);
-          });
+            expect(res.body.article.votes).toEqual(oldVotes + 1);
+          });    
+          })
+        
       });
       it("POST 201 new article", ()=>{
         const newArticle = {title: "Making databases", body: "The tricky part about databases is in maintaining them. You can build a perfectly good api... and then a few months later... some random update just stops it from working!",topic: "mitch", author: "butter_bridge" }
