@@ -1,4 +1,5 @@
 const {pool} = require("../db/connection");
+const {commentCountConverter} = require("../db/utils/pqslUtils")
 // const { returning } = require("../db/connection");
 const {getUsersByUsername}= require("./users.model")
 // exports.getAllArticles = ({
@@ -25,18 +26,23 @@ const {getUsersByUsername}= require("./users.model")
 //       });
 //     });
 // };
+// const articlesWithCommentCount =  "SELECT articles.*, COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;";
+const articlesWithCommentCount =  "SELECT articles.article_id, COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;";
+const articlesWithoutComment = "SELECT  * FROM articles;"
 exports.getAllArticles = ({
   sort_by = "created_at",
   order = "desc",
   author,
   topic,
 }) => {
+  commentCountConverter();
   return pool.connect()
-  .then(
-    ()=> pool.query("SELECT articles.*, COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;").then((res) => {
-   return res.rows; 
-}).catch((err)=>console.log(err)))
+  .then(()=> pool.query("SELECT * from articles;").then((res)=>{
+  return res.rows;
+})
+.catch((err)=>console.log(err)))
 };
+
 
 // exports.getArticleById = (article_id) => {
 //   return connection

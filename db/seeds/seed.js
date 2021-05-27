@@ -1,7 +1,7 @@
 const {pool, client} = require("../connection.js");
 
 const { formatDates, formatComments, makeRefObj } = require("../utils/utils");
-
+const {commentCountConverter} = require("../utils/pqslUtils")
 exports.seed = function (topicData, articleData, commentData, userData) {
    pool.connect()
 .then(()=>console.log("connected successfully"))
@@ -54,6 +54,7 @@ return  articles().then((res)=>{
   return insertComments(0);
 })
 })
+.then(()=>commentCountConverter())
 })
 .catch((e)=>console.log("err: ", e))
 .finally(()=> client.end())
