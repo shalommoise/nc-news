@@ -20,12 +20,22 @@ describe("/api", () => {
         .get("/api/topics/")
         .expect(200)
         .then((res) => {
-          console.log(res.body)
           res.body.topics.forEach((topic) =>
             expect(Object.keys(topic)).toEqual(["slug", "description"])
           );
         });
     });
+  describe("/:topic", ()=>{
+    it.only("GET: 200: returns single topic", ()=>{
+      return request(app)
+        .get("/api/topics/paper")
+        .expect(200)
+        .then((res)=>{
+          expect(res.body.topic.slug).toBe("paper");
+          expect(res.body.topic.description).toBe("what books are made of")
+        })
+    })
+  })
   });
   describe("users", () => {
     it("GET: 200: return full users table", () => {
@@ -154,7 +164,7 @@ describe("/api", () => {
           });    
           })
       });
-      it.only("POST 201 new article", ()=>{
+      it("POST 201 new article", ()=>{
         return request(app)
         .get("/api/articles/")
         .then((res)=>{
