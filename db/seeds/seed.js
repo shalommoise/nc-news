@@ -35,11 +35,12 @@ exports.seed = function (topicData, articleData, commentData, userData) {
       return insertArticles(0);
  })
 .then(() => {
-   const articles = ()=> pool.query("SELECT * FROM articles")
+   const articles = ()=> pool.query("SELECT * FROM articles;")
 
 return  articles().then((res)=>{
-     const aritcleRows = res.rows;
-     const articleRef = makeRefObj(aritcleRows);  
+     const articleRows = res.rows;
+     console.log(articleRows)
+     const articleRef = makeRefObj(articleRows);  
     const newDates = formatDates(commentData);
    const formattedComments = formatComments(newDates, articleRef);
 
