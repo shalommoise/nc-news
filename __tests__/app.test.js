@@ -140,9 +140,7 @@ describe("/api", () => {
             );
           });
       });
-      it.only("PATCH: 200: updates the votes item in the article", () => {
-      
-        
+      it("PATCH: 200: updates the votes item in the article", () => {    
         return request(app)
           .get("/api/articles/1").then((res)=>{
             const oldVotes = res.body.article.votes;
@@ -155,9 +153,13 @@ describe("/api", () => {
             expect(res.body.article.votes).toEqual(oldVotes + 1);
           });    
           })
-        
       });
-      it("POST 201 new article", ()=>{
+      it.only("POST 201 new article", ()=>{
+        return request(app)
+        .get("/api/articles/")
+        .then((res)=>{
+          const articlesCount = res.body.articles.length
+        console.log(articlesCount, typeof articlesCount)
         const newArticle = {title: "Making databases", body: "The tricky part about databases is in maintaining them. You can build a perfectly good api... and then a few months later... some random update just stops it from working!",topic: "mitch", author: "butter_bridge" }
         return request(app)
         .post("/api/articles/")
@@ -165,13 +167,14 @@ describe("/api", () => {
         .expect(201)
         .then((res)=>{
           const {title, body, topic, author, article_id, comment_count, votes, created_at} = res.body.article
-           expect(article_id).toBe(13);
+           expect(article_id).toBe(articlesCount + 1);
           expect(title).toBe("Making databases");
           expect(body).toBe(newArticle.body);
           expect(author).toBe("butter_bridge");
           expect(topic).toBe("mitch");
           expect(votes).toBe(0);
           expect(comment_count).toBe(0);
+        })
         })
       })
       describe("/:article_id errors", () => {

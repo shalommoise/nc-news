@@ -26,9 +26,7 @@ const {getUsersByUsername}= require("./users.model")
 //       });
 //     });
 // };
-// const articlesWithCommentCount =  "SELECT articles.*, COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;";
-const articlesWithCommentCount =  "SELECT articles.article_id, COUNT(articles.article_id) AS comment_count FROM articles JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = comments.article_id GROUP BY articles.article_id;";
-const articlesWithoutComment = "SELECT  * FROM articles;"
+
 exports.getAllArticles = ({
   sort_by = "created_at",
   order = "desc",
@@ -70,7 +68,8 @@ return pool.connect().then(()=>pool.query(`SELECT * FROM articles WHERE article_
 exports.patchArticleVote = (article_id, inc_votes = 0) => {
   return pool.connect()
   .then(()=>pool.query(`UPDATE articles SET votes = votes + 1 WHERE article_id = '${article_id}' RETURNING *;`)).then((res)=>{
-    return res.rows[0];
+   const [article] = res.rows; 
+      return article;
   })
   // return connection("articles")
   //   .where("article_id", article_id)
@@ -85,15 +84,24 @@ exports.patchArticleVote = (article_id, inc_votes = 0) => {
 };
 
 exports.createArticle = ({title, body, topic, author} )=>{
+ 
   const checkUser = getUsersByUsername(author);
-return  Promise.all([checkUser]).then(()=>{
-  return connection
-  .insert({title, body, author, topic})
-  .into("articles")
-  .returning("*")
-  .then((res)=>{
-   return res[0]
- })
-  });
+  return  Promise.all([checkUser]).then(()=>{
+    return pool.connect()
+    .then(()=>pool.query(`INSERT INTO articles(title, body, topic, author) VALUES('${title}', '${body}', '${topic}', '${author}') RETURNING *;`))
+    .then((res)=>{
+     const [article] = res.rows; 
+      return article;
+    }).catch((err)=>console.log(err))
+  })
+// return  Promise.all([checkUser]).then(()=>{
+//   return connection
+//   .insert({title, body, author, topic})
+//   .into("articles")
+//   .returning("*")
+//   .then((res)=>{
+//    return res[0]
+//  })
+  // });
 
 }
