@@ -39,7 +39,6 @@ exports.seed = function (topicData, articleData, commentData, userData) {
 
 return  articles().then((res)=>{
      const articleRows = res.rows;
-     console.log(articleRows)
      const articleRef = makeRefObj(articleRows);  
     const newDates = formatDates(commentData);
    const formattedComments = formatComments(newDates, articleRef);
