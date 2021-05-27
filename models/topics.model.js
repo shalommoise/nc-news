@@ -9,20 +9,14 @@ return   pool.connect()
 }).catch((err)=>console.log(err))
 };
 
-// exports.getSingleTopic = (username) => 
-// pool.connect()
-// .then(()=>pool.query(`SELECT * FROM users WHERE username='${username}';`))
-// .then((res)=>{
-//   if(!res.rows.length) return Promise.reject({ status: 404, msg: "User not found" });
-// const [results] =  res.rows;
-// return results 
-// });
 
 
 exports.getSingleTopic = (slug) =>
 pool.connect()
 .then(()=>pool.query(`SELECT * FROM topics WHERE slug = '${slug}';`))
 .then((res)=>{
+  // if(!res.rows.length) return Promise.reject({ status: 404, msg: `"${slug}" is not currently a topic` })
 const [topic] = res.rows;
+
 return topic;
 })

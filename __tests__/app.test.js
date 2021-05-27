@@ -26,13 +26,22 @@ describe("/api", () => {
         });
     });
   describe("/:topic", ()=>{
-    it.only("GET: 200: returns single topic", ()=>{
+    it("GET: 200: returns single topic", ()=>{
       return request(app)
         .get("/api/topics/paper")
         .expect(200)
         .then((res)=>{
           expect(res.body.topic.slug).toBe("paper");
           expect(res.body.topic.description).toBe("what books are made of")
+        })
+    })
+    it.only("ERR: 404 Topic does not exist", ()=>{
+       return request(app)
+        .get("/api/topics/notHere")
+        .expect(404)
+        .then((res)=>{
+          expect(res.body.msg).toBe('"notHere" is not currently a topic');
+         
         })
     })
   })
@@ -76,7 +85,7 @@ describe("/api", () => {
           .get("/api/users/brian")
           .expect(404)
           .then((res) => {
-            expect(res.body).toEqual({ msg: "User not found" });
+            expect(res.body).toEqual({ msg: 'User: "brian" not found' });
           });
       });
       it("Method Error: 405: PUT", () => {
@@ -190,7 +199,7 @@ describe("/api", () => {
       describe("/:article_id errors", () => {
         it("Not found: 404: article_id does not exist", () => {
           return request(app)
-            .get("/api/articles/15")
+            .get("/api/articles/400")
             .expect(404)
             .then((res) => {
               expect(res.body.msg).toBe("article not found");

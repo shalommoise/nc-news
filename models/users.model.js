@@ -11,8 +11,8 @@ exports.getUsersByUsername = (username) =>
 pool.connect()
 .then(()=>pool.query(`SELECT * FROM users WHERE username='${username}';`))
 .then((res)=>{
-  if(!res.rows.length) return Promise.reject({ status: 404, msg: "User not found" });
-const [results] =  res.rows;
-return results 
+  if(!res.rows.length) return Promise.reject({ status: 404, msg: `User: "${username}" not found` });
+const [user] =  res.rows;
+return user;
 });
 

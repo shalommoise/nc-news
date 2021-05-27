@@ -60,7 +60,9 @@ exports.getAllArticles = ({
 exports.getArticleById = (article_id) => {
    commentCountConverter();
 return pool.connect().then(()=>pool.query(`SELECT * FROM articles WHERE article_id = ${article_id};`)).then((res)=>{
-  return  res.rows[0]
+   const [article] = res.rows; 
+    if(!res.rows.length) return Promise.reject({ status: 404, msg: "article not found" });
+      return article;
 })
 };
 //, COUNT(articles.article_id) AS comment_count
