@@ -177,8 +177,7 @@ describe("/api", () => {
         return request(app)
         .get("/api/articles/")
         .then((res)=>{
-          const articlesCount = res.body.articles.length
-        console.log(articlesCount, typeof articlesCount)
+          const articlesCount = res.body.articles.length;
         const newArticle = {title: "Making databases", body: "The tricky part about databases is in maintaining them. You can build a perfectly good api... and then a few months later... some random update just stops it from working!",topic: "mitch", author: "butter_bridge" }
         return request(app)
         .post("/api/articles/")
@@ -596,7 +595,7 @@ describe("/api", () => {
       });
     });
   });
-  it.only("GET: 200: returns JSON describing available endpoints", () => {
+  it("GET: 200: returns JSON describing available endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
