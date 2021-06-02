@@ -33,8 +33,7 @@ exports.patchCommentByVote = (req, res, next) => {
   const { comment_id } = req.params;
   const { inc_votes } = req.body;
 
-  updateCommentByVote(comment_id, inc_votes)
-    .then((comment) => {
+  updateCommentByVote(comment_id, inc_votes).then((comment) => {
       res.send({ comment });
     })
     .catch(next);

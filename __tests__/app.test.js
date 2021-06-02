@@ -455,7 +455,7 @@ describe("/api", () => {
           });
         });
     });
-    it.only("GET: 200: filters the articles by author", () => {
+    it("GET: 200: filters the articles by author", () => {
       return request(app)
         .get("/api/articles?author=icellusedkars")
         .expect(200)
@@ -466,7 +466,7 @@ describe("/api", () => {
           });
         });
     });
-    it.only("GET: 200: filters the articles by topic", () => {
+    it("GET: 200: filters the articles by topic", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
@@ -477,7 +477,7 @@ describe("/api", () => {
           });
         });
     });
-      it.only("GET: 200: filters the articles by author & topic", () => {
+      it("GET: 200: filters the articles by author & topic", () => {
       return request(app)
         .get("/api/articles?topic=mitch&author=icellusedkars")
         .expect(200)
@@ -517,7 +517,7 @@ describe("/api", () => {
     });
   });
   describe("comments/:comment_id", () => {
-    it("PATCH 200: updates the votes item in the comments", () => {
+    it.only("PATCH 200: updates the votes item in the comments", () => {
       return request(app)
         .patch("/api/comments/2")
         .send({ inc_votes: -2 })
