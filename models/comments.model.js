@@ -75,10 +75,7 @@ exports.removeComment = (comment_id) => {
 };
 
 exports.sendAllComments = () => {
-  return connection
-    .select("*")
-    .from("comments")
-    .then((res) => {
-      return res;
-    });
-};
+  return pool.connect()
+  .then(()=>pool.query("SELECT * FROM comments;"))
+  .then((res)=>res.rows)
+}

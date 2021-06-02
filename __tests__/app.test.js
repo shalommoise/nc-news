@@ -517,7 +517,7 @@ describe("/api", () => {
     });
   });
   describe("comments/:comment_id", () => {
-    it.only("PATCH 200: updates the votes item in the comments", () => {
+    it("PATCH 200: updates the votes item in the comments", () => {
       return request(app)
         .patch("/api/comments/2")
         .send({ inc_votes: -2 })
@@ -526,7 +526,7 @@ describe("/api", () => {
           expect(res.body.comment.votes).toBe(12);
         });
     });
-    it("GET: 200: returns list of all comments", () => {
+    it.only("GET: 200: returns list of all comments", () => {
       return request(app)
         .get("/api/comments/")
         .expect(200)
