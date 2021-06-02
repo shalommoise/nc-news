@@ -445,7 +445,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: order article by ascending order", () => {
+    it.only("GET: 200: order article by ascending order", () => {
       return request(app)
         .get("/api/articles?order=asc")
         .expect(200)

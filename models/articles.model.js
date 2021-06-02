@@ -30,8 +30,11 @@ const {getUsersByUsername}= require("./users.model")
 exports.getAllArticles = (query) => {
   commentCountConverter();
   const  {sort_by = "created_at",  order = "desc", author, topic} = query;
+  let filter = '';
+  
+  if(author) filter = `WHERE author = '${author}'`
   return pool.connect()
-  .then(()=> pool.query(`SELECT * FROM articles ORDER BY ${sort_by} ${order};`).then((res)=>{
+  .then(()=> pool.query(`SELECT * FROM articles ${filter} ORDER BY ${sort_by} ${order};`).then((res)=>{
   return res.rows;
 })
 .catch((err)=>console.log(err)))
