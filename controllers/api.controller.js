@@ -1,9 +1,18 @@
-const { sendInfo } = require("../models/api.model");
 
 exports.getInfo = (req, res, next) => {
-  sendInfo()
-    .then((api) => {
-      res.send({ "nc-news": { api } });
-    })
-    .catch(next);
+
+      res.send({ "nc-news": {api: {
+        topics: { GET: "/" },
+        users: { GET: ["/", "/:username"] },
+        articles: [
+          { GET: ["/", "/:article_id", "/:article_id/comments"] },
+          { PATCH: "/:article_id" },
+          { POST: "/:article_id/comments" },
+        ],
+        comments: { GET: "/", 
+        PATCH: "/:comment_id", 
+        DELETE: "/:comment_id" },
+      } 
+    }
+  })
 };

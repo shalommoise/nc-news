@@ -545,7 +545,7 @@ describe("/api", () => {
           });
         });
     });
-    it.only("DELETE: 204: removes a comment by comment_id", () => {
+    it("DELETE: 204: removes a comment by comment_id", () => {
       return request(app)
         .del("/api/comments/2")
         .expect(204)
@@ -573,7 +573,7 @@ describe("/api", () => {
             expect(res.body.msg).toBe("comment not found");
           });
       });
-      it.only("PATCH ERR: 400: try to change vote by a non-number", () => {
+      it("PATCH ERR: 400: try to change vote by a non-number", () => {
         return request(app)
           .patch("/api/comments/2")
           .send({ inc_votes: "thirty" })
@@ -582,13 +582,13 @@ describe("/api", () => {
             expect(res.body.msg).toBe("bad request");
           });
       });
-      it("PATCH ERR, no inc_Votes, returns comment unchamged", () => {
+      it("PATCH ERR, no inc_Votes, returns comment unchanged", () => {
         return request(app)
-          .patch("/api/comments/2")
+          .patch("/api/comments/3")
 
           .expect(200)
           .then((res) => {
-            expect(res.body.comment.votes).toBe(14);
+            expect(res.body.comment.votes).toBe(100);
           });
       });
       it("Method Error: 405: PUT", () => {
@@ -596,7 +596,7 @@ describe("/api", () => {
       });
     });
   });
-  it("GET: 200: returns JSON describing available endpoints", () => {
+  it.only("GET: 200: returns JSON describing available endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
