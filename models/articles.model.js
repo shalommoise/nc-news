@@ -31,7 +31,7 @@ exports.getAllArticles = (query) => {
   commentCountConverter();
   const  {sort_by = "created_at",  order = "desc", author, topic} = query;
   return pool.connect()
-  .then(()=> pool.query("SELECT * FROM articles ORDER BY created_at desc;").then((res)=>{
+  .then(()=> pool.query(`SELECT * FROM articles ORDER BY ${sort_by} ${order};`).then((res)=>{
   return res.rows;
 })
 .catch((err)=>console.log(err)))

@@ -415,7 +415,7 @@ describe("/api", () => {
              expect(totalCount).not.toBe(0)
         });
     });
-    it.only("GET: 200: all articles sorted by deafult to date", () => {
+    it("GET: 200: all articles sorted by deafult to date", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -435,7 +435,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: sort article by author in ascendong order", () => {
+    it("GET: 200: sort article by author in ascending order", () => {
       return request(app)
         .get("/api/articles?sort_by=author")
         .expect(200)
@@ -455,7 +455,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: filters the articles by author", () => {
+    it.only("GET: 200: filters the articles by author", () => {
       return request(app)
         .get("/api/articles?author=icellusedkars")
         .expect(200)
