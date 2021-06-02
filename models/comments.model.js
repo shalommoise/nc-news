@@ -47,6 +47,7 @@ exports.updateCommentByVote = (comment_id, inc_votes = 0) => {
   .then(()=>pool.query(`UPDATE comments SET votes = votes + ${inc_votes} WHERE comment_id = '${comment_id}' RETURNING *;`))
  .then((res) => {
 const [comment] = res.rows;
+if(!comment) return Promise.reject({ status: 404, msg: "comment not found" });
 return comment;
   });
 };

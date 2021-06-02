@@ -563,15 +563,8 @@ describe("/api", () => {
     });
 
     describe("comments/:comment_id errors", () => {
-      it("DELETE ERR Not found: 404: try to delete a comment that does not exist", () => {
-        return request(app)
-          .del("/api/comments/1000")
-          .expect(404)
-          .then((res) => {
-            expect(res.body.msg).toBe("comment not found");
-          });
-      });
-      it("PATCH ERR Not found: 404: try to delete a comment that does not exist", () => {
+    
+      it.only("PATCH ERR Not found: 404: try to patch a comment that does not exist", () => {
         return request(app)
           .patch("/api/comments/1000")
           .send({ inc_votes: 12 })
