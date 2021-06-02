@@ -445,7 +445,7 @@ describe("/api", () => {
           });
         });
     });
-    it.only("GET: 200: order article by ascending order", () => {
+    it("GET: 200: order article by ascending order", () => {
       return request(app)
         .get("/api/articles?order=asc")
         .expect(200)
@@ -466,7 +466,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: filters the articles by topic", () => {
+    it.only("GET: 200: filters the articles by topic", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)

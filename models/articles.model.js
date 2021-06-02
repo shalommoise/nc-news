@@ -32,7 +32,8 @@ exports.getAllArticles = (query) => {
   const  {sort_by = "created_at",  order = "desc", author, topic} = query;
   let filter = '';
   
-  if(author) filter = `WHERE author = '${author}'`
+  if(author) filter = `WHERE author = '${author}'`;
+  if(topic) filter = `WHERE topic = '${topic}'`
   return pool.connect()
   .then(()=> pool.query(`SELECT * FROM articles ${filter} ORDER BY ${sort_by} ${order};`).then((res)=>{
   return res.rows;
