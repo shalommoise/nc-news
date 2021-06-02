@@ -526,7 +526,7 @@ describe("/api", () => {
           expect(res.body.comment.votes).toBe(12);
         });
     });
-    it.only("GET: 200: returns list of all comments", () => {
+    it("GET: 200: returns list of all comments", () => {
       return request(app)
         .get("/api/comments/")
         .expect(200)
@@ -545,7 +545,7 @@ describe("/api", () => {
           });
         });
     });
-    it("DELETE: 204: removes a comment by comment_id", () => {
+    it.only("DELETE: 204: removes a comment by comment_id", () => {
       return request(app)
         .del("/api/comments/2")
         .expect(204)

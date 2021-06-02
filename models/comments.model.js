@@ -64,14 +64,9 @@ return comment;
 //     });
 
 exports.removeComment = (comment_id) => {
-  return connection("comments")
-    .where("comment_id", comment_id)
-    .del()
-    .then((res) => {
-      if (res === 0) {
-        return Promise.reject({ status: 404, msg: "comment not found" });
-      } else return res;
-    });
+   return pool.connect()
+  .then(()=>pool.query(`DELETE FROM comments WHERE comment_id = '${comment_id}';`))
+  .then((res)=>res.rows)
 };
 
 exports.sendAllComments = () => {
