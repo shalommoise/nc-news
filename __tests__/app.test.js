@@ -35,7 +35,7 @@ describe("/api", () => {
           expect(res.body.topic.description).toBe("what books are made of")
         })
     })
-    it.only("ERR: 404 Topic does not exist", ()=>{
+    it("ERR: 404 Topic does not exist", ()=>{
        return request(app)
         .get("/api/topics/notHere")
         .expect(404)
@@ -396,6 +396,7 @@ describe("/api", () => {
         .then((res) => {
            let totalCount = 0;
           res.body.articles.forEach((article) => {
+            totalCount += article.comment_count
             expect(article).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
@@ -408,11 +409,13 @@ describe("/api", () => {
                 comment_count: expect.any(Number),
               })
             );
-             expect(totalCount).not.toBe(0)
+            
+          
           });
+             expect(totalCount).not.toBe(0)
         });
     });
-    it("GET: 200: all articles sorted by deafult to date", () => {
+    it.only("GET: 200: all articles sorted by deafult to date", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)

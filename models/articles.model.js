@@ -27,15 +27,11 @@ const {getUsersByUsername}= require("./users.model")
 //     });
 // };
 
-exports.getAllArticles = ({
-  sort_by = "created_at",
-  order = "desc",
-  author,
-  topic,
-}) => {
+exports.getAllArticles = (query) => {
   commentCountConverter();
+  const  {sort_by = "created_at",  order = "desc", author, topic} = query;
   return pool.connect()
-  .then(()=> pool.query("SELECT * from articles;").then((res)=>{
+  .then(()=> pool.query("SELECT * FROM articles ORDER BY created_at desc;").then((res)=>{
   return res.rows;
 })
 .catch((err)=>console.log(err)))
