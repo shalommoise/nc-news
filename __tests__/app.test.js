@@ -564,7 +564,7 @@ describe("/api", () => {
 
     describe("comments/:comment_id errors", () => {
     
-      it.only("PATCH ERR Not found: 404: try to patch a comment that does not exist", () => {
+      it("PATCH ERR Not found: 404: try to patch a comment that does not exist", () => {
         return request(app)
           .patch("/api/comments/1000")
           .send({ inc_votes: 12 })
@@ -573,7 +573,7 @@ describe("/api", () => {
             expect(res.body.msg).toBe("comment not found");
           });
       });
-      it("PATCH ERR: 400: try to change vote by a non-number", () => {
+      it.only("PATCH ERR: 400: try to change vote by a non-number", () => {
         return request(app)
           .patch("/api/comments/2")
           .send({ inc_votes: "thirty" })
