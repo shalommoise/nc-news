@@ -477,6 +477,18 @@ describe("/api", () => {
           });
         });
     });
+      it.only("GET: 200: filters the articles by author & topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch&author=icellusedkars")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBeGreaterThan(0);
+          res.body.articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+            expect(article.author).toBe("icellusedkars");
+          });
+        });
+    });
     it("GET: 200: returns empty array for author that does not exist", () => {
       return request(app)
         .get("/api/articles?author=lurker")

@@ -34,6 +34,7 @@ exports.getAllArticles = (query) => {
   
   if(author) filter = `WHERE author = '${author}'`;
   if(topic) filter = `WHERE topic = '${topic}'`
+  if(topic && author) filter = `WHERE author = '${author}' AND topic = '${topic}'`;
   return pool.connect()
   .then(()=> pool.query(`SELECT * FROM articles ${filter} ORDER BY ${sort_by} ${order};`).then((res)=>{
   return res.rows;
