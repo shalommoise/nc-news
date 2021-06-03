@@ -7,7 +7,6 @@ const config = {
   host: "localhost",
   port: 5432,
   database: "nc_news",
-  connection: process.env.DATABASE_URL,
   connectionString: DB_URL,
   ssl: {
         rejectUnauthorized: false,
