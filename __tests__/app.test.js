@@ -279,7 +279,7 @@ describe("/api", () => {
         });
       });
       describe("/comments", () => {
-        it.only("POST: 201, creates comments on articles", () => {
+        it("POST: 201, creates comments on articles", () => {
           return request(app)
             .post("/api/articles/5/comments")
             .send({ username: "rogersop", body: "Great article!" })
@@ -297,7 +297,7 @@ describe("/api", () => {
               );
             });
         });
-         it.only("POST: 201, creates comments on articles with apostarphes", () => {
+         it("POST: 201, creates comments on articles with apostarphes", () => {
           return request(app)
             .post("/api/articles/5/comments")
             .send({ username: "rogersop", body: "Favourite of butterbridge's article!" })
@@ -315,13 +315,13 @@ describe("/api", () => {
               );
             });
         });
-        it("GET: 200, recieves specific comments by article_id", () => {
+        it.only("GET: 200, recieves specific comments by article_id", () => {
           return request(app)
             .get("/api/articles/5/comments")
             .expect(200)
             .then((res) => {
-              expect(res.body.comments.comments.length).toBeGreaterThan(0);
-              res.body.comments.comments.forEach((comment) => {
+              expect(res.body.comments.length).toBeGreaterThan(0);
+              res.body.comments.forEach((comment) => {
                 expect(comment).toEqual(
                   expect.objectContaining({
                     comment_id: expect.any(Number),
