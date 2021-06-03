@@ -56,8 +56,22 @@ exports.removeApostraphe =(text)=>{
   return newText;
 }
 
-exports.addApostraphe =(text)=>{
+const addApostraphe =(text)=>{
  if(!text||!text.length) return '';
   const newText = text.replace(/"/g, "'");
    return newText;
+}
+
+exports.formatMultipleApostarpheArticle = (article) =>{
+  article.title = addApostraphe(article.title);   
+   article.topic = addApostraphe(article.topic);
+  article.body = addApostraphe(article.body);
+  article.author = addApostraphe(article.author);
+  return article;
+}
+
+exports.formatMultipleApostarpheComment = (comment) =>{
+  comment.body = addApostraphe(comment.body);
+  comment.author = addApostraphe(comment.author);
+  return comment;
 }

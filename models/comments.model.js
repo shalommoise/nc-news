@@ -1,5 +1,5 @@
 const {pool} = require("../db/connection");
-const {removeApostraphe, addApostraphe} = require("../db/utils/utils");
+const {removeApostraphe, formatMultipleApostarpheComment} = require("../db/utils/utils");
 
 exports.makeComment = (article_id, comment) => {
   
@@ -9,8 +9,7 @@ exports.makeComment = (article_id, comment) => {
   .then(()=>pool.query((`INSERT INTO comments(article_id, author, body) VALUES(${article_id}, '${username}', '${removeApostraphe(body)}') RETURNING *;`))).then((res)=>{
     const [comment] = res.rows;
    if (comment.author === null) return Promise.reject({ status: 400, msg: "bad request" })
-   comment.body  = addApostraphe(comment.body)
-    return comment;
+  return formatMultipleApostarpheComment(comment);
   })
 };
 
@@ -18,10 +17,7 @@ exports.getCommentsByArticleId = (article_id, query) => {
   const {sort_by = "created_at",  order = "desc"} = query;
    return pool.connect()
    .then(()=>pool.query(`SELECT * FROM comments WHERE article_id = ${article_id} ORDER BY ${sort_by} ${order};`)).then((res)=>{
-const comments = res.rows.map((comment)=> {
-  comment.body = addApostraphe(comment.body);
-  return comment;
-})
+ const comments = res.rows.map((comment)=>formatMultipleApostarpheComment(comment))
 if(!comments.length) return Promise.reject({ status: 404, msg: "article not found" });
     return comments;
    })
@@ -46,5 +42,8 @@ exports.removeComment = (comment_id) => {
 exports.sendAllComments = () => {
   return pool.connect()
   .then(()=>pool.query("SELECT * FROM comments;"))
-  .then((res)=>res.rows)
+  .then((res)=>{
+ const comments = res.rows.map((comment)=>formatMultipleApostarpheComment(comment));
+ return comments;
+  })
 }

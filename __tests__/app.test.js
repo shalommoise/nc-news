@@ -382,7 +382,7 @@ describe("/api", () => {
               expect(res.body.comments).toEqual([]);
             });
         });
-        describe.only("comments errors", () => {
+        describe("comments errors", () => {
           it("POST error, missing username", () => {
             return request(app)
               .post("/api/articles/5/comments")
