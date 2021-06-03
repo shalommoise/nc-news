@@ -12,9 +12,10 @@ exports.makeComment = (article_id, comment) => {
   })
 };
 
-exports.getCommentsByArticleId = (article_id, comment) => {
+exports.getCommentsByArticleId = (article_id, query) => {
+  const {sort_by = "created_at",  order = "desc"} = query;
    return pool.connect()
-   .then(()=>pool.query(`SELECT * FROM comments WHERE article_id = ${article_id};`)).then((res)=>{
+   .then(()=>pool.query(`SELECT * FROM comments WHERE article_id = ${article_id} ORDER BY ${sort_by} ${order};`)).then((res)=>{
 const comments = res.rows.map((comment)=> {
   comment.body = addApostraphe(comment.body);
   return comment;

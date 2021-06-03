@@ -336,7 +336,7 @@ describe("/api", () => {
               });
             });
         });
-        it("GET 200 comments by article_id sorted by any column, deafults to created_at", () => {
+        it.only("GET 200 comments by article_id sorted by any column, deafults to created_at", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -348,13 +348,13 @@ describe("/api", () => {
         });
         it("GET: 200: comments by article_id, sorted by any valid column", () => {
           return request(app)
-            .get("/api/articles/1/comments?sort_by=comment_id")
+            .get("/api/articles/1/comments?sort_by=comment_id&order=asc")
             .expect(200)
             .then((res) => {
               expect(res.body.comments).toBeSortedBy("comment_id");
             });
         });
-        it("GET: 200: comments by article_id, sorted by any valid column, in desc or asc order", () => {
+        it.only("GET: 200: comments by article_id, sorted by any valid column, in desc or asc order", () => {
           return request(app)
             .get("/api/articles/1/comments?sort_by=comment_id&order=desc")
             .expect(200)
@@ -364,7 +364,7 @@ describe("/api", () => {
               });
             });
         });
-        it("GET: 200: comments by article_id, sorted by votes", () => {
+        it.only("GET: 200: comments by article_id, sorted by votes", () => {
           return request(app)
             .get("/api/articles/1/comments?sort_by=votes")
             .expect(200)
@@ -374,15 +374,15 @@ describe("/api", () => {
               });
             });
         });
-        it("GET: 200: empty array for article with no comments", () => {
+        it.only("GET: 200: empty array for article with no comments", () => {
           return request(app)
             .get("/api/articles/2/comments")
             .expect(200)
             .then((res) => {
-              expect(res.body.comments.comments).toEqual([]);
+              expect(res.body.comments).toEqual([]);
             });
         });
-        describe("comments errors", () => {
+        describe.only("comments errors", () => {
           it("POST error, missing username", () => {
             return request(app)
               .post("/api/articles/5/comments")
