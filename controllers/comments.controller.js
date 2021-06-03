@@ -17,7 +17,7 @@ exports.postComment = (req, res, next) => {
 
 exports.sendCommentsByArticleId = (req, res, next) => {
   const { article_id } = req.params;
-    getCommentsByArticleId(article_id, req.query)
+  getCommentsByArticleId(article_id, req.query)
     .then((comments) => {
       res.send({ comments });
     })

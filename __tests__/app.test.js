@@ -315,7 +315,7 @@ describe("/api", () => {
               );
             });
         });
-        it.only("GET: 200, recieves specific comments by article_id", () => {
+        it("GET: 200, recieves specific comments by article_id", () => {
           return request(app)
             .get("/api/articles/5/comments")
             .expect(200)
@@ -336,7 +336,7 @@ describe("/api", () => {
               });
             });
         });
-        it.only("GET 200 comments by article_id sorted by any column, deafults to created_at", () => {
+        it("GET 200 comments by article_id sorted by any column, deafults to created_at", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -354,7 +354,7 @@ describe("/api", () => {
               expect(res.body.comments).toBeSortedBy("comment_id");
             });
         });
-        it.only("GET: 200: comments by article_id, sorted by any valid column, in desc or asc order", () => {
+        it("GET: 200: comments by article_id, sorted by any valid column, in desc or asc order", () => {
           return request(app)
             .get("/api/articles/1/comments?sort_by=comment_id&order=desc")
             .expect(200)
@@ -364,7 +364,7 @@ describe("/api", () => {
               });
             });
         });
-        it.only("GET: 200: comments by article_id, sorted by votes", () => {
+        it("GET: 200: comments by article_id, sorted by votes", () => {
           return request(app)
             .get("/api/articles/1/comments?sort_by=votes")
             .expect(200)
@@ -374,7 +374,7 @@ describe("/api", () => {
               });
             });
         });
-        it.only("GET: 200: empty array for article with no comments", () => {
+        it("GET: 200: empty array for article with no comments", () => {
           return request(app)
             .get("/api/articles/2/comments")
             .expect(200)
@@ -395,7 +395,7 @@ describe("/api", () => {
           it("POST error, article not found", () => {
             return request(app)
               .post("/api/articles/1000/comments")
-              .send({ body: "Great article!" })
+              .send({ username: "rogersop", body: "Great article!" })
               .expect(404)
               .then((res) => {
                 expect(res.body.msg).toBe("article not found");
@@ -406,7 +406,7 @@ describe("/api", () => {
               .get("/api/articles/?sort_by=likes")
               .expect(400)
               .then((res) => {
-                expect(res.body.msg).toBe("column not valid");
+                expect(res.body.msg).toBe("bad request");
               });
           });
 

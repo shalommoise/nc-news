@@ -14,8 +14,7 @@ exports.getAllArticles = (query) => {
   return pool.connect()
   .then(()=> pool.query(`SELECT * FROM articles ${filter} ORDER BY ${sort_by} ${order};`).then((res)=>{
   return res.rows;
-})
-.catch((err)=>console.log(err)))
+}))
 };
 
 
