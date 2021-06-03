@@ -195,7 +195,7 @@ describe("/api", () => {
         })
         })
       })
-      it.only("POST 201 new article with apostarphes", ()=>{
+      it("POST 201 new article with apostarphes", ()=>{
         const newArticle = {title: "Apostarphe's", body: "I'm not sure if this will work, I guess we'll see. ",topic: "mitch", author: "butter_bridge" }
         return request(app)
         .post("/api/articles/")
@@ -279,7 +279,7 @@ describe("/api", () => {
         });
       });
       describe("/comments", () => {
-        it("POST: 201, creates comments on articles", () => {
+        it.only("POST: 201, creates comments on articles", () => {
           return request(app)
             .post("/api/articles/5/comments")
             .send({ username: "rogersop", body: "Great article!" })
@@ -290,6 +290,24 @@ describe("/api", () => {
                   article_id: 5,
                   author: "rogersop",
                   body: "Great article!",
+                  comment_id: expect.any(Number),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                })
+              );
+            });
+        });
+         it.only("POST: 201, creates comments on articles with apostarphes", () => {
+          return request(app)
+            .post("/api/articles/5/comments")
+            .send({ username: "rogersop", body: "Favourite of butterbridge's article!" })
+            .expect(201)
+            .then((res) => {
+              expect(res.body.comment).toEqual(
+                expect.objectContaining({
+                  article_id: 5,
+                  author: "rogersop",
+                  body: "Favourite of butterbridge's article!",
                   comment_id: expect.any(Number),
                   created_at: expect.any(String),
                   votes: expect.any(Number),

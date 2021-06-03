@@ -1,19 +1,15 @@
 const {pool} = require("../db/connection");
-
+const {removeApostraphe, addApostraphe} = require("../db/utils/utils")
 exports.makeComment = (article_id, comment) => {
-  return connection
-    .insert({
-      author: comment.username,
-      article_id: article_id,
-      body: comment.body,
-    })
-    .into("comments")
-    .returning("*")
-    .then((res) => {
-      if (res[0].author === null)
-        return Promise.reject({ status: 400, msg: "bad request" });
-      return res[0];
-    });
+ 
+  const {username, body} = comment;
+  return pool.connect()
+  .then(()=>pool.query((`INSERT INTO comments(article_id, author, body) VALUES(${article_id}, '${username}', '${removeApostraphe(body)}') RETURNING *;`))).then((res)=>{
+    const [comment] = res.rows
+   if (comment.author === null) return Promise.reject({ status: 400, msg: "bad request" })
+   comment.body  = addApostraphe(comment.body)
+    return comment;
+  })
 };
 
 exports.getCommentsByArticleId = (

@@ -8,9 +8,7 @@ const {
 
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
-  const comment = req.body;
-
-  makeComment(article_id, comment)
+  makeComment(article_id, req.body)
     .then((comment) => {
       res.status(201).send({ comment });
     })
