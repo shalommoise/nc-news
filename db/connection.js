@@ -1,4 +1,4 @@
-const ENV = process.env.NODE_ENV || "test";
+const ENV = process.env.NODE_ENV || "development";
 
 const test = 'nc_news_test';
 const dev = 'nc_news';
