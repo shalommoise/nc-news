@@ -11,6 +11,8 @@ exports.PSQLerrorHandler = (err, req, res, next) => {
     return res.status(406).send({ msg: "missing user information" });
   } else if (err.code === "23503") {
     return res.status(404).send({ msg: "article not found" });
+  } else if (err.code === "42601") {
+ return res.status(400).send({ msg: "Apostraphe issues" });
   } else {
     next(err);
   }

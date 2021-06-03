@@ -184,7 +184,7 @@ describe("/api", () => {
         .send(newArticle)
         .expect(201)
         .then((res)=>{
-          const {title, body, topic, author, article_id, comment_count, votes, created_at} = res.body.article
+          const {title, body, topic, author, article_id, comment_count, votes} = res.body.article
            expect(article_id).toBe(articlesCount + 1);
           expect(title).toBe("Making databases");
           expect(body).toBe(newArticle.body);
@@ -193,6 +193,21 @@ describe("/api", () => {
           expect(votes).toBe(0);
           expect(comment_count).toBe(0);
         })
+        })
+      })
+      it.only("POST 201 new article with apostarphes", ()=>{
+        const newArticle = {title: "Apostarphe's", body: "I'm not sure if this will work, I guess we'll see. ",topic: "mitch", author: "butter_bridge" }
+        return request(app)
+        .post("/api/articles/")
+        .send(newArticle)
+        .expect(201).then((res)=>{
+           const {title, body, topic, author, comment_count, votes} = res.body.article
+          expect(title).toBe("Apostarphe's");
+          expect(body).toBe(newArticle.body);
+          expect(author).toBe("butter_bridge");
+          expect(topic).toBe("mitch");
+          expect(votes).toBe(0);
+          expect(comment_count).toBe(0);
         })
       })
       describe("/:article_id errors", () => {
