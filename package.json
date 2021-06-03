@@ -10,7 +10,9 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/run-seed.js",
     "test": "jest --watch",
-    "start": "node listen.js"
+    "start": "node listen.js",
+    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) node ./db/run-seed.js"
+    
   },
   "jest": {
     "setupFilesAfterEnv": [
