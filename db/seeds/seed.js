@@ -39,10 +39,10 @@ exports.seed = function (topicData, articleData, commentData, userData) {
    const articles = ()=> pool.query("SELECT * FROM articles;")
 
 return  articles().then((res)=>{
-     const articleRows = res.rows;
-     const articleRef = makeRefObj(articleRows);  
-    const newDates = formatDates(commentData);
-   const formattedComments = formatComments(newDates, articleRef);
+  const articleRows = res.rows;
+  const articleRef = makeRefObj(articleRows);  
+  const newDates = formatDates(commentData);
+  const formattedComments = formatComments(newDates, articleRef);
 
    const authors = formattedComments.map((datum)=> datum.author);
   const bodies = formattedComments.map((datum)=> removeApostraphe(datum.body));
