@@ -16,9 +16,16 @@ const productConfig =
 const config = {
   //  user: "shalom",
   // password: "pass",
-  // host: "localhost",
+  // host: "ec2-54-224-124-241.compute-1.amazonaws.com",
   // port: 5432,
   // database: "nc_news",
+
+
+    user: "sbulormryqiaad",
+  password: "f2defd5bbcc352eeb8607a6898aac6d405e8fff69c9bac0d0655663ebb33d7df",
+  host: "ec2-54-224-124-241.compute-1.amazonaws.com",
+  port: 5432,
+  database: "dcoh7qlfpp16k1",
   productConfig
 }
 
