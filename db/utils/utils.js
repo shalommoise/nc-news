@@ -56,4 +56,8 @@ exports.removeApostraphe =(text)=>{
   return newText;
 }
 
-exports.addApostraphe =(text)=>{}
+exports.addApostraphe =(text)=>{
+ if(!text||!text.length) return '';
+  const newText = text.replace(/"/g, "'");
+   return newText;
+}
