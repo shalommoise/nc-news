@@ -2,6 +2,9 @@
   "name": "be-nc-news",
   "version": "1.0.0",
   "description": "bc-nc-news",
+   "engines": {
+    "node": "14.4.0"
+  },
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
