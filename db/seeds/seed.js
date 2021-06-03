@@ -1,6 +1,6 @@
 const {pool, client} = require("../connection.js");
 
-const { formatDates, formatComments, makeRefObj } = require("../utils/utils");
+const { formatDates, formatComments, makeRefObj, removeApostraphe} = require("../utils/utils");
 const {commentCountConverter} = require("../utils/pqslUtils")
 exports.seed = function (topicData, articleData, commentData, userData) {
    pool.connect()
@@ -18,15 +18,16 @@ exports.seed = function (topicData, articleData, commentData, userData) {
    const usernames = userData.map((datum)=> datum.username);
    const names = userData.map((datum)=> datum.name);
    const avatar_urls = userData.map((datum)=> datum.avatar_url);
+  
      const insertUsers = (n) => pool.query(`INSERT INTO users (username, name, avatar_url) VALUES ('${usernames[n]}' , '${names[n]}', '${avatar_urls[n]}');`)
-     .then(()=>n < slugs.length - 1 && insertUsers(n + 1));
+     .then(()=>n < userData.length - 1 && insertUsers(n + 1));
       return Promise.all([insertTopics(0), insertUsers(0)]).then(() => {
        
         const formattedArticlesTimes = formatDates(articleData);
-        const titles = formattedArticlesTimes.map((datum)=> datum.title);
+        const titles = formattedArticlesTimes.map((datum)=> removeApostraphe(datum.title));
         const topics = formattedArticlesTimes.map((datum)=> datum.topic);
         const authors = formattedArticlesTimes.map((datum)=> datum.author);
-        const bodies = formattedArticlesTimes.map((datum)=> datum.body);
+        const bodies = formattedArticlesTimes.map((datum)=> removeApostraphe(datum.body));
         const times = formattedArticlesTimes.map((datum)=> datum.created_at);
         const votes =  formattedArticlesTimes.map((datum)=> datum.votes ? datum.votes : 0);
      
@@ -44,9 +45,9 @@ return  articles().then((res)=>{
    const formattedComments = formatComments(newDates, articleRef);
 
    const authors = formattedComments.map((datum)=> datum.author);
-  const bodies = formattedComments.map((datum)=> datum.body);
+  const bodies = formattedComments.map((datum)=> removeApostraphe(datum.body));
    const times = formattedComments.map((datum)=> datum.created_at);
-   const votes =formattedComments.map((datum)=>datum.votes);
+   const votes =formattedComments.map((datum)=> datum.votes ? datum.votes : 0);
    const article_ids = formattedComments.map((datum)=>datum.article_id);
    const insertComments =(n)=>{
     return pool.query(`INSERT INTO comments (author, article_id, votes, body, created_at) VALUES ('${authors[n]}', '${article_ids[n]}', '${votes[n]}','${bodies[n]}', '${times[n]}')`).then(()=>n < formattedComments.length - 1 && insertComments(n + 1))

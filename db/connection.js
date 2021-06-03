@@ -12,12 +12,12 @@ const config = {
   host: "localhost",
   port: 5432,
   database: dev,
-    connection: {
-      connectionString: DB_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      }
-  }
+  //   connection: {
+  //     connectionString: DB_URL,
+  //     ssl: {
+  //       rejectUnauthorized: false,
+  //     }
+  // }
 };
 
 const {Pool, Client} = require('pg');
