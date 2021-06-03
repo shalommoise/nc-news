@@ -1,10 +1,16 @@
-const ENV = process.env.NODE_ENV || "development";
-const knex = require("knex");
-const config = require("../knexfile");
+const ENV = process.env.NODE_ENV || "test";
 
-const dbConfig =
-  ENV === "production"
-    ? { client: "pg", connection: process.env.DATABASE_URL }
-    : require("../knexfile");
+const test = 'nc_news_test';
+const dev = 'nc_news';
+const config = {
+   user: "shalom",
+  password: "pass",
+  host: "localhost",
+  port: 5432,
+  database: test
+};
 
-module.exports = knex(dbConfig);
+const {Pool, Client} = require('pg');
+const pool = new Pool(config);
+const client = new Client(config)
+module.exports = {pool, client};

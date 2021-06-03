@@ -1,7 +1,12 @@
+const { indexOf } = require("../data/development-data/comments");
+
 exports.formatDates = (list) => {
   const newList = list.map((item) => {
     const copy = { ...item };
-    copy.created_at = new Date(item.created_at);
+    const date = new Date(item.created_at);
+
+     copy.created_at = changeDateToSQLFrom(date) 
+    
 
     return copy;
   });
@@ -33,3 +38,40 @@ exports.formatComments = (comments, articleRef) => {
 
   return newList;
 };
+const changeDateToSQLFrom =(date)=> {
+
+  const dateArr = date.toString().split(" ");
+  
+  const end = dateArr[1].split(".")
+const newDate = `${dateArr[3]}-${months.indexOf(dateArr[1])}-${dateArr[2]} ${dateArr[4]}`
+
+
+  return newDate;
+}
+const months = ['', 'Jan', 'Feb', 'Mar', 'Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+exports.removeApostraphe =(text)=>{
+  if(!text||!text.length) return '';
+  const newText = text.replace(/'/g, '"');
+  return newText;
+}
+
+const addApostraphe =(text)=>{
+ if(!text||!text.length) return '';
+  const newText = text.replace(/"/g, "'");
+   return newText;
+}
+
+exports.formatMultipleApostarpheArticle = (article) =>{
+  article.title = addApostraphe(article.title);   
+   article.topic = addApostraphe(article.topic);
+  article.body = addApostraphe(article.body);
+  article.author = addApostraphe(article.author);
+  return article;
+}
+
+exports.formatMultipleApostarpheComment = (comment) =>{
+  comment.body = addApostraphe(comment.body);
+  comment.author = addApostraphe(comment.author);
+  return comment;
+}

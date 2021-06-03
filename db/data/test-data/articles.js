@@ -60,7 +60,7 @@ module.exports = [
     created_at: 659276514171,
   },
   {
-    title: "They're not exactly dogs, are they?",
+    title: 'They are not exactly dogs, are they?',
     topic: 'mitch',
     author: 'butter_bridge',
     body: 'Well? Think about it.',
@@ -70,7 +70,7 @@ module.exports = [
     title: 'Seven inspirational thought leaders from Manchester UK',
     topic: 'mitch',
     author: 'rogersop',
-    body: "Who are we kidding, there is only one, and it's Mitch!",
+    body: 'Who are we kidding, there is only one, and its Mitch!',
     created_at: 406988514171,
   },
   {
@@ -80,12 +80,13 @@ module.exports = [
     body:
       'Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?',
     created_at: 280844514171,
-  },
+  }
+  ,
   {
     title: 'Moustache',
     topic: 'mitch',
     author: 'butter_bridge',
     body: 'Have you seen the size of that thing?',
     created_at: 154700514171,
-  },
+  }
 ];

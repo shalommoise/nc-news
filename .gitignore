@@ -1,3 +1,4 @@
-knexfile
+
 node_modules
 instructions
+.env*

@@ -1,7 +1,7 @@
 module.exports = [{
   body:
-    "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-  belongs_to: "They're not exactly dogs, are they?",
+    "Oh, I have got compassion running out of my nose, pal! I am the Sultan of Sentiment!",
+  belongs_to: "They are not exactly dogs, are they?",
   created_by: 'butter_bridge',
   votes: 16,
   created_at: 1511354163389,
@@ -16,7 +16,7 @@ module.exports = [{
 },
 {
   body:
-    'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.',
+    'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — on you it works.',
   belongs_to: 'Living in the shadow of a great man',
   created_by: 'icellusedkars',
   votes: 100,
@@ -101,7 +101,7 @@ module.exports = [{
   created_at: 1101386163389,
 },
 {
-  body: "I am 100% sure that we're not completely sure.",
+  body: "I am 100% sure that we are not completely sure.",
   belongs_to: 'UNCOVERED: catspiracy to bring down democracy',
   created_by: 'butter_bridge',
   votes: 1,
@@ -116,7 +116,7 @@ module.exports = [{
 },
 {
   body: 'The owls are not what they seem.',
-  belongs_to: "They're not exactly dogs, are they?",
+  belongs_to: "They are not exactly dogs, are they?",
   created_by: 'icellusedkars',
   votes: 20,
   created_at: 1006778163389,

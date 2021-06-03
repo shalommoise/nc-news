@@ -1,10 +1,20 @@
-const connection = require("../db/connection");
+const{ pool }= require("../db/connection");
 
-exports.getTopics = () => {
-  return connection
-    .select("*")
-    .from("topics")
-    .then((res) => {
-      return res;
-    });
+exports.getTopics = () =>{
+
+return   pool.connect()
+  .then(()=>pool.query("SELECT * FROM topics;"))
+ .then((res) => {
+   return res.rows
+}).catch((err)=>console.log(err))
 };
+
+
+
+exports.getSingleTopic = (slug) =>
+pool.connect()
+.then(()=>pool.query(`SELECT * FROM topics WHERE slug = '${slug}';`))
+.then((res)=>{
+const [topic] = res.rows;
+return topic;
+})

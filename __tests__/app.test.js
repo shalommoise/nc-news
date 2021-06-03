@@ -1,11 +1,11 @@
 const request = require("supertest");
 const {app} = require("../app");
-const connection = require("../db/connection");
-
+const pool = require("../db/connection");
+// const {runSeed} =require("../db/run-seed")
 
 describe("/api", () => {
-  beforeEach(() => connection.seed.run());
-  afterAll(() => connection.destroy());
+  // beforeEach(() => runSeed());
+  // afterAll(() => pool.destroy());
   it("All: 404 error from mispelling url", () => {
     return request(app)
       .get("/api/tpics/")
@@ -25,6 +25,26 @@ describe("/api", () => {
           );
         });
     });
+  describe("/:topic", ()=>{
+    it("GET: 200: returns single topic", ()=>{
+      return request(app)
+        .get("/api/topics/paper")
+        .expect(200)
+        .then((res)=>{
+          expect(res.body.topic.slug).toBe("paper");
+          expect(res.body.topic.description).toBe("what books are made of")
+        })
+    })
+    it("ERR: 404 Topic does not exist", ()=>{
+       return request(app)
+        .get("/api/topics/notHere")
+        .expect(404)
+        .then((res)=>{
+          expect(res.body.msg).toBe('"notHere" is not currently a topic');
+         
+        })
+    })
+  })
   });
   describe("users", () => {
     it("GET: 200: return full users table", () => {
@@ -41,7 +61,7 @@ describe("/api", () => {
           );
 
           expect(res.body.users[0].name).toBe("jonny");
-          expect(res.body.users[3].name).toBe("do_nothing");
+          expect(res.body.users[2].name).toBe("paul");
         });
     });
     describe("/:username", () => {
@@ -65,7 +85,7 @@ describe("/api", () => {
           .get("/api/users/brian")
           .expect(404)
           .then((res) => {
-            expect(res.body).toEqual({ msg: "User not found" });
+            expect(res.body).toEqual({ msg: 'User: "brian" not found' });
           });
       });
       it("Method Error: 405: PUT", () => {
@@ -79,7 +99,9 @@ describe("/api", () => {
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
-          res.body.articles.forEach((article) =>
+         
+          res.body.articles.forEach((article) =>{
+         
             expect(article).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
@@ -92,7 +114,9 @@ describe("/api", () => {
                 comment_count: expect.any(Number),
               })
             )
-          );
+          
+          }
+            );
         });
     });
     describe("/:article_id", () => {
@@ -101,8 +125,8 @@ describe("/api", () => {
           .get("/api/articles/5")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.article_id).toBe(5);
-            expect(res.body.article.article.title).toBe(
+            expect(res.body.article.article_id).toBe(5);
+            expect(res.body.article.title).toBe(
               "UNCOVERED: catspiracy to bring down democracy"
             );
           });
@@ -112,7 +136,7 @@ describe("/api", () => {
           .get("/api/articles/1")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.article_id).toBe(1);
+            expect(res.body.article.article_id).toBe(1);
           });
       });
       it("GET: 200: returns specific article based on article_id", () => {
@@ -120,7 +144,7 @@ describe("/api", () => {
           .get("/api/articles/2")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.article_id).toBe(2);
+            expect(res.body.article.article_id).toBe(2);
           });
       });
       it("GET: 200: returns sepcific article with comment_count", () => {
@@ -128,33 +152,57 @@ describe("/api", () => {
           .get("/api/articles/5")
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article).toEqual(
+            expect(res.body.article).toEqual(
               expect.objectContaining({
                 comment_count: expect.any(Number),
               })
             );
           });
       });
-      it("PATCH: 200: updates the votes item in the article", () => {
-        const newVote = { inc_votes: 1 };
+      it("PATCH: 200: updates the votes item in the article", () => {    
+        return request(app)
+          .get("/api/articles/1").then((res)=>{
+            const oldVotes = res.body.article.votes;
+              const newVote = { inc_votes: 1 };
         return request(app)
           .patch("/api/articles/1")
           .send(newVote)
           .expect(200)
           .then((res) => {
-            expect(res.body.article.article.votes).toEqual(101);
-          });
+            expect(res.body.article.votes).toEqual(oldVotes + 1);
+          });    
+          })
       });
       it("POST 201 new article", ()=>{
+        return request(app)
+        .get("/api/articles/")
+        .then((res)=>{
+          const articlesCount = res.body.articles.length;
         const newArticle = {title: "Making databases", body: "The tricky part about databases is in maintaining them. You can build a perfectly good api... and then a few months later... some random update just stops it from working!",topic: "mitch", author: "butter_bridge" }
         return request(app)
         .post("/api/articles/")
         .send(newArticle)
         .expect(201)
         .then((res)=>{
-          const {title, body, topic, author, article_id, comment_count, votes, created_at} = res.body.article
-           expect(article_id).toBe(13);
+          const {title, body, topic, author, article_id, comment_count, votes} = res.body.article
+           expect(article_id).toBe(articlesCount + 1);
           expect(title).toBe("Making databases");
+          expect(body).toBe(newArticle.body);
+          expect(author).toBe("butter_bridge");
+          expect(topic).toBe("mitch");
+          expect(votes).toBe(0);
+          expect(comment_count).toBe(0);
+        })
+        })
+      })
+      it("POST 201 new article with apostarphes", ()=>{
+        const newArticle = {title: "Apostarphe's", body: "I'm not sure if this will work, I guess we'll see. ",topic: "mitch", author: "butter_bridge" }
+        return request(app)
+        .post("/api/articles/")
+        .send(newArticle)
+        .expect(201).then((res)=>{
+           const {title, body, topic, author, comment_count, votes} = res.body.article
+          expect(title).toBe("Apostarphe's");
           expect(body).toBe(newArticle.body);
           expect(author).toBe("butter_bridge");
           expect(topic).toBe("mitch");
@@ -165,7 +213,7 @@ describe("/api", () => {
       describe("/:article_id errors", () => {
         it("Not found: 404: article_id does not exist", () => {
           return request(app)
-            .get("/api/articles/15")
+            .get("/api/articles/400")
             .expect(404)
             .then((res) => {
               expect(res.body.msg).toBe("article not found");
@@ -249,13 +297,31 @@ describe("/api", () => {
               );
             });
         });
+         it("POST: 201, creates comments on articles with apostarphes", () => {
+          return request(app)
+            .post("/api/articles/5/comments")
+            .send({ username: "rogersop", body: "Favourite of butterbridge's article!" })
+            .expect(201)
+            .then((res) => {
+              expect(res.body.comment).toEqual(
+                expect.objectContaining({
+                  article_id: 5,
+                  author: "rogersop",
+                  body: "Favourite of butterbridge's article!",
+                  comment_id: expect.any(Number),
+                  created_at: expect.any(String),
+                  votes: expect.any(Number),
+                })
+              );
+            });
+        });
         it("GET: 200, recieves specific comments by article_id", () => {
           return request(app)
             .get("/api/articles/5/comments")
             .expect(200)
             .then((res) => {
-              expect(res.body.comments.comments.length).toBeGreaterThan(0);
-              res.body.comments.comments.forEach((comment) => {
+              expect(res.body.comments.length).toBeGreaterThan(0);
+              res.body.comments.forEach((comment) => {
                 expect(comment).toEqual(
                   expect.objectContaining({
                     comment_id: expect.any(Number),
@@ -282,7 +348,7 @@ describe("/api", () => {
         });
         it("GET: 200: comments by article_id, sorted by any valid column", () => {
           return request(app)
-            .get("/api/articles/1/comments?sort_by=comment_id")
+            .get("/api/articles/1/comments?sort_by=comment_id&order=asc")
             .expect(200)
             .then((res) => {
               expect(res.body.comments).toBeSortedBy("comment_id");
@@ -313,7 +379,7 @@ describe("/api", () => {
             .get("/api/articles/2/comments")
             .expect(200)
             .then((res) => {
-              expect(res.body.comments.comments).toEqual([]);
+              expect(res.body.comments).toEqual([]);
             });
         });
         describe("comments errors", () => {
@@ -329,7 +395,7 @@ describe("/api", () => {
           it("POST error, article not found", () => {
             return request(app)
               .post("/api/articles/1000/comments")
-              .send({ body: "Great article!" })
+              .send({ username: "rogersop", body: "Great article!" })
               .expect(404)
               .then((res) => {
                 expect(res.body.msg).toBe("article not found");
@@ -340,7 +406,7 @@ describe("/api", () => {
               .get("/api/articles/?sort_by=likes")
               .expect(400)
               .then((res) => {
-                expect(res.body.msg).toBe("column not valid");
+                expect(res.body.msg).toBe("bad request");
               });
           });
 
@@ -360,7 +426,9 @@ describe("/api", () => {
         .get("/api/articles/")
         .expect(200)
         .then((res) => {
+           let totalCount = 0;
           res.body.articles.forEach((article) => {
+            totalCount += article.comment_count
             expect(article).toEqual(
               expect.objectContaining({
                 article_id: expect.any(Number),
@@ -373,7 +441,10 @@ describe("/api", () => {
                 comment_count: expect.any(Number),
               })
             );
+            
+          
           });
+             expect(totalCount).not.toBe(0)
         });
     });
     it("GET: 200: all articles sorted by deafult to date", () => {
@@ -396,7 +467,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: sort article by author in ascendong order", () => {
+    it("GET: 200: sort article by author in ascending order", () => {
       return request(app)
         .get("/api/articles?sort_by=author")
         .expect(200)
@@ -435,6 +506,18 @@ describe("/api", () => {
           expect(res.body.articles.length).toBeGreaterThan(0);
           res.body.articles.forEach((article) => {
             expect(article.topic).toBe("mitch");
+          });
+        });
+    });
+      it("GET: 200: filters the articles by author & topic", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch&author=icellusedkars")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles.length).toBeGreaterThan(0);
+          res.body.articles.forEach((article) => {
+            expect(article.topic).toBe("mitch");
+            expect(article.author).toBe("icellusedkars");
           });
         });
     });
@@ -512,15 +595,8 @@ describe("/api", () => {
     });
 
     describe("comments/:comment_id errors", () => {
-      it("DELETE ERR Not found: 404: try to delete a comment that does not exist", () => {
-        return request(app)
-          .del("/api/comments/1000")
-          .expect(404)
-          .then((res) => {
-            expect(res.body.msg).toBe("comment not found");
-          });
-      });
-      it("PATCH ERR Not found: 404: try to delete a comment that does not exist", () => {
+    
+      it("PATCH ERR Not found: 404: try to patch a comment that does not exist", () => {
         return request(app)
           .patch("/api/comments/1000")
           .send({ inc_votes: 12 })
@@ -538,13 +614,13 @@ describe("/api", () => {
             expect(res.body.msg).toBe("bad request");
           });
       });
-      it("PATCH ERR, no inc_Votes, returns comment unchamged", () => {
+      it("PATCH ERR, no inc_Votes, returns comment unchanged", () => {
         return request(app)
-          .patch("/api/comments/2")
+          .patch("/api/comments/3")
 
           .expect(200)
           .then((res) => {
-            expect(res.body.comment.votes).toBe(14);
+            expect(res.body.comment.votes).toBe(100);
           });
       });
       it("Method Error: 405: PUT", () => {
