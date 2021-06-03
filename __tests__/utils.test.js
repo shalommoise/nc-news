@@ -2,7 +2,9 @@ const {
   formatDates,
   makeRefObj,
   formatComments,
-  changeDateToSQLFrom
+  changeDateToSQLFrom,
+  removeApostraphe, 
+  addApostraphe
 } = require("../db/utils/utils");
 
 describe("formatDates", () => {
@@ -159,15 +161,33 @@ describe("formatComments", () => {
     expect(formatted).toEqual(expectedOutput);
   });
 });
-describe.only("changeDateToSQLFrom()", ()=>{
+describe("changeDateToSQLFrom()", ()=>{
   test('returns empty str when input is empty', () => {
     expect(changeDateToSQLFrom('')).toBe('');
   });
-  test.only('return str to SQL from', ()=>{
+  test('return str to SQL from', ()=>{
             // '2018-11-15T12:21:54.171Z'
     const sqlDate = '2018-11-15 12:21:54.171';
     const currentDate =   formatDates([{ created_at: 1542284514171}])[0].created_at;
     
     expect(changeDateToSQLFrom(currentDate)).toBe(sqlDate)
   })
+})
+
+describe.only("removeApostraphe", ()=>{
+  test('Empty strings returns empty string', () => {
+    expect(removeApostraphe()).toBe('');
+    expect(removeApostraphe('')).toBe('');
+    expect(removeApostraphe([])).toBe('');
+    expect(removeApostraphe({})).toBe('');
+  });
+  test('String with no apostaphe does not change', ()=>{
+    const text = "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world."
+    expect(removeApostraphe(text)).toBe(text);
+  })
+  test('String replaces apostraphe', () => {
+     const text = "will This work. I don't know, we'll see.";
+     const newText = "will This work. I don\"t know, we\"ll see.";
+     expect(removeApostraphe(text)).toBe(newText);
+  });
 })

@@ -49,3 +49,11 @@ const newDate = `${dateArr[3]}-${months.indexOf(dateArr[1])}-${dateArr[2]} ${dat
   return newDate;
 }
 const months = ['', 'Jan', 'Feb', 'Mar', 'Apr','May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+exports.removeApostraphe =(text)=>{
+  if(!text||!text.length) return '';
+  const newText = text.replace(/'/g, '"');
+  return newText;
+}
+
+exports.addApostraphe =(text)=>{}
