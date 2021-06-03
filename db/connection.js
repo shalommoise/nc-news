@@ -14,11 +14,11 @@ const productConfig =
     : {};
 
 const config = {
-   user: "shalom",
-  password: "pass",
-  host: "localhost",
-  port: 5432,
-  database: "nc_news",
+  //  user: "shalom",
+  // password: "pass",
+  // host: "localhost",
+  // port: 5432,
+  // database: "nc_news",
   productConfig
 }
 
