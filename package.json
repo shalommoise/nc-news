@@ -2,7 +2,7 @@
   "name": "be-nc-news",
   "version": "1.0.0",
   "description": "bc-nc-news",
-   "engines": {
+  "engines": {
     "node": "14.4.0"
   },
   "main": "index.js",
@@ -12,7 +12,6 @@
     "test": "jest --watch",
     "start": "node listen.js",
     "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed"
-    
   },
   "jest": {
     "setupFilesAfterEnv": [
