@@ -43,12 +43,12 @@ return  articles().then((res)=>{
   const articleRef = makeRefObj(articleRows);  
   const newDates = formatDates(commentData);
   const formattedComments = formatComments(newDates, articleRef);
-
-   const authors = formattedComments.map((datum)=> datum.author);
+  const authors = formattedComments.map((datum)=> datum.author);
   const bodies = formattedComments.map((datum)=> removeApostraphe(datum.body));
    const times = formattedComments.map((datum)=> datum.created_at);
    const votes =formattedComments.map((datum)=> datum.votes ? datum.votes : 0);
    const article_ids = formattedComments.map((datum)=>datum.article_id);
+
    const insertComments =(n)=>{
     return pool.query(`INSERT INTO comments (author, article_id, votes, body, created_at) VALUES ('${authors[n]}', '${article_ids[n]}', '${votes[n]}','${bodies[n]}', '${times[n]}')`).then(()=>n < formattedComments.length - 1 && insertComments(n + 1))
    }
@@ -58,5 +58,5 @@ return  articles().then((res)=>{
 .then(()=>commentCountConverter())
 })
 .catch((e)=>console.log("err: ", e))
-.finally(()=> client.end())
+.finally(()=> console.log("seeding has been completed"))
 };

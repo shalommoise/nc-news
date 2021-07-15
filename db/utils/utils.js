@@ -17,7 +17,7 @@ exports.formatDates = (list) => {
 exports.makeRefObj = (articles) => {
   const lookUpObj = {};
   articles.forEach((article) => {
-    const title = article.title;
+    const title = addApostraphe(article.title);
     const id = article.article_id;
     lookUpObj[title] = id;
   });
@@ -30,7 +30,6 @@ exports.formatComments = (comments, articleRef) => {
     const copy = { ...comment };
     copy.author = copy.created_by;
     copy.article_id = articleRef[copy.belongs_to];
-
     delete copy.created_by;
     delete copy.belongs_to;
     return copy;
