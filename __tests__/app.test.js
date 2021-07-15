@@ -1,12 +1,12 @@
 const request = require("supertest");
 const {app} = require("../app");
-const pool = require("../db/connection");
+
 // const {runSeed} =require("../db/run-seed")
 
 describe("/api", () => {
   // beforeEach(() => runSeed());
   // afterAll(() => pool.destroy());
-  it("All: 404 error from mispelling url", () => {
+  test("All: 404 error from mispelling url", () => {
     return request(app)
       .get("/api/tpics/")
       .expect(404)
@@ -15,7 +15,7 @@ describe("/api", () => {
       });
   });
   describe("/topics", () => {
-    it("GET: 200: return full topics table", () => {
+    test("GET: 200: return full topics table", () => {
       return request(app)
         .get("/api/topics/")
         .expect(200)
@@ -26,7 +26,7 @@ describe("/api", () => {
         });
     });
   describe("/:topic", ()=>{
-    it("GET: 200: returns single topic", ()=>{
+    test("GET: 200: returns single topic", ()=>{
       return request(app)
         .get("/api/topics/paper")
         .expect(200)
@@ -35,7 +35,7 @@ describe("/api", () => {
           expect(res.body.topic.description).toBe("what books are made of")
         })
     })
-    it("ERR: 404 Topic does not exist", ()=>{
+    test("ERR: 404 Topic does not exist", ()=>{
        return request(app)
         .get("/api/topics/notHere")
         .expect(404)
@@ -47,7 +47,7 @@ describe("/api", () => {
   })
   });
   describe("users", () => {
-    it("GET: 200: return full users table", () => {
+    test("GET: 200: return full users table", () => {
       return request(app)
         .get("/api/users/")
         .expect(200)
@@ -65,7 +65,7 @@ describe("/api", () => {
         });
     });
     describe("/:username", () => {
-      it("GET: 200 return details of user by username", () => {
+      test("GET: 200 return details of user by username", () => {
         return request(app)
           .get("/api/users/butter_bridge")
           .expect(200)
@@ -80,21 +80,21 @@ describe("/api", () => {
       });
     });
     describe("username error", () => {
-      it("Not found: 404: username not found", () => {
+      test("Not found: 404: username not found", () => {
         return request(app)
           .get("/api/users/brian")
           .expect(404)
           .then((res) => {
-            expect(res.body).toEqual({ msg: 'User: "brian" not found' });
+            expect(res.body).toEqual({ msg: 'User not found' });
           });
       });
-      it("Method Error: 405: PUT", () => {
+      test("Method Error: 405: PUT", () => {
         return request(app).put("/api/users/butter_bridge").expect(405);
       });
     });
   });
   describe("/articles", () => {
-    it("GET: 200: return full articles table", () => {
+    test("GET: 200: return full articles table", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -120,7 +120,7 @@ describe("/api", () => {
         });
     });
     describe("/:article_id", () => {
-      it("GET: 200: returns specific article based on article_id", () => {
+      test("GET: 200: returns specific article based on article_id", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
@@ -131,7 +131,7 @@ describe("/api", () => {
             );
           });
       });
-      it("GET: 200: returns specific article based on article_id", () => {
+      test("GET: 200: returns specific article based on article_id", () => {
         return request(app)
           .get("/api/articles/1")
           .expect(200)
@@ -139,7 +139,7 @@ describe("/api", () => {
             expect(res.body.article.article_id).toBe(1);
           });
       });
-      it("GET: 200: returns specific article based on article_id", () => {
+      test("GET: 200: returns specific article based on article_id", () => {
         return request(app)
           .get("/api/articles/2")
           .expect(200)
@@ -147,7 +147,7 @@ describe("/api", () => {
             expect(res.body.article.article_id).toBe(2);
           });
       });
-      it("GET: 200: returns sepcific article with comment_count", () => {
+      test("GET: 200: returns sepcific article with comment_count", () => {
         return request(app)
           .get("/api/articles/5")
           .expect(200)
@@ -159,7 +159,7 @@ describe("/api", () => {
             );
           });
       });
-      it("PATCH: 200: updates the votes item in the article", () => {    
+      test("PATCH: 200: updates the votes item in the article", () => {    
         return request(app)
           .get("/api/articles/1").then((res)=>{
             const oldVotes = res.body.article.votes;
@@ -173,7 +173,7 @@ describe("/api", () => {
           });    
           })
       });
-      it("POST 201 new article", ()=>{
+      test("POST 201 new article", ()=>{
         return request(app)
         .get("/api/articles/")
         .then((res)=>{
@@ -195,7 +195,7 @@ describe("/api", () => {
         })
         })
       })
-      it("POST 201 new article with apostarphes", ()=>{
+      test("POST 201 new article with apostarphes", ()=>{
         const newArticle = {title: "Apostarphe's", body: "I'm not sure if this will work, I guess we'll see. ",topic: "mitch", author: "butter_bridge" }
         return request(app)
         .post("/api/articles/")
@@ -211,7 +211,7 @@ describe("/api", () => {
         })
       })
       describe("/:article_id errors", () => {
-        it("Not found: 404: article_id does not exist", () => {
+        test("Not found: 404: article_id does not exist", () => {
           return request(app)
             .get("/api/articles/400")
             .expect(404)
@@ -219,7 +219,7 @@ describe("/api", () => {
               expect(res.body.msg).toBe("article not found");
             });
         });
-        it("Bad Request: 400: invalid article_id", () => {
+        test("Bad Request: 400: invalid article_id", () => {
           return request(app)
             .get("/api/articles/lion")
             .expect(400)
@@ -227,7 +227,7 @@ describe("/api", () => {
               expect(res.body.msg).toBe("bad request");
             });
         });
-        it("Not found: 404: Post article with unkonwn user", () => {
+        test("Not found: 404: Post article with unkonwn user", () => {
           const newArticle = {title: "Errors", body: "Love some good error handling",topic: "mitch", author: "noOne" }
           return request(app)
             .post("/api/articles")
@@ -247,15 +247,15 @@ describe("/api", () => {
         //       expect(res.body.msg).toBe("Topic not Found");
         //     });
         // });
-        it("PATCH ERR, inc_votes empty, defaults to add to 0", () => {
+        test.only("PATCH ERR, inc_votes empty, defaults to add to 0", () => {
           return request(app)
             .patch("/api/articles/1")
             .expect(200)
             .then((res) => {
-              expect(res.body.article.article.votes).toEqual(100);
+              expect(res.body.article.votes).toEqual(100);
             });
         });
-        it("PATCH ERR 400, inc_votes is not a number", () => {
+        test("PATCH ERR 400, inc_votes is not a number", () => {
           const newVote = { inc_votes: "100" };
           return request(app)
             .patch("/api/articles/1")
@@ -265,7 +265,7 @@ describe("/api", () => {
               expect(res.body.msg).toBe("Bad Request");
             });
         });
-        it("Method error: 405: try to delete or put an article", () => {
+        test("Method error: 405: try to delete or put an article", () => {
           const methods = ["del", "put"];
           const promises = methods.map((method) => {
             return request(app)
@@ -279,7 +279,7 @@ describe("/api", () => {
         });
       });
       describe("/comments", () => {
-        it("POST: 201, creates comments on articles", () => {
+        test("POST: 201, creates comments on articles", () => {
           return request(app)
             .post("/api/articles/5/comments")
             .send({ username: "rogersop", body: "Great article!" })
@@ -297,7 +297,7 @@ describe("/api", () => {
               );
             });
         });
-         it("POST: 201, creates comments on articles with apostarphes", () => {
+         test("POST: 201, creates comments on articles with apostarphes", () => {
           return request(app)
             .post("/api/articles/5/comments")
             .send({ username: "rogersop", body: "Favourite of butterbridge's article!" })
@@ -315,7 +315,7 @@ describe("/api", () => {
               );
             });
         });
-        it("GET: 200, recieves specific comments by article_id", () => {
+        test("GET: 200, recieves specific comments by article_id", () => {
           return request(app)
             .get("/api/articles/5/comments")
             .expect(200)
@@ -336,7 +336,7 @@ describe("/api", () => {
               });
             });
         });
-        it("GET 200 comments by article_id sorted by any column, deafults to created_at", () => {
+        test("GET 200 comments by article_id sorted by any column, deafults to created_at", () => {
           return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
@@ -346,7 +346,7 @@ describe("/api", () => {
               });
             });
         });
-        it("GET: 200: comments by article_id, sorted by any valid column", () => {
+        test("GET: 200: comments by article_id, sorted by any valid column", () => {
           return request(app)
             .get("/api/articles/1/comments?sort_by=comment_id&order=asc")
             .expect(200)
@@ -354,7 +354,7 @@ describe("/api", () => {
               expect(res.body.comments).toBeSortedBy("comment_id");
             });
         });
-        it("GET: 200: comments by article_id, sorted by any valid column, in desc or asc order", () => {
+        test("GET: 200: comments by article_id, sorted by any valid column, in desc or asc order", () => {
           return request(app)
             .get("/api/articles/1/comments?sort_by=comment_id&order=desc")
             .expect(200)
@@ -364,7 +364,7 @@ describe("/api", () => {
               });
             });
         });
-        it("GET: 200: comments by article_id, sorted by votes", () => {
+        test("GET: 200: comments by article_id, sorted by votes", () => {
           return request(app)
             .get("/api/articles/1/comments?sort_by=votes")
             .expect(200)
@@ -374,7 +374,7 @@ describe("/api", () => {
               });
             });
         });
-        it("GET: 200: empty array for article with no comments", () => {
+        test("GET: 200: empty array for article with no comments", () => {
           return request(app)
             .get("/api/articles/2/comments")
             .expect(200)
@@ -383,7 +383,7 @@ describe("/api", () => {
             });
         });
         describe("comments errors", () => {
-          it("POST error, missing username", () => {
+          test("POST error, missing username", () => {
             return request(app)
               .post("/api/articles/5/comments")
               .send({ body: "Great article!" })
@@ -392,7 +392,7 @@ describe("/api", () => {
                 expect(res.body.msg).toBe("bad request");
               });
           });
-          it("POST error, article not found", () => {
+          test("POST error, article not found", () => {
             return request(app)
               .post("/api/articles/1000/comments")
               .send({ username: "rogersop", body: "Great article!" })
@@ -401,7 +401,7 @@ describe("/api", () => {
                 expect(res.body.msg).toBe("article not found");
               });
           });
-          it("GET error, sort comments by column that does not exist", () => {
+          test("GET error, sort comments by column that does not exist", () => {
             return request(app)
               .get("/api/articles/?sort_by=likes")
               .expect(400)
@@ -410,7 +410,7 @@ describe("/api", () => {
               });
           });
 
-          it("404, article does not exist", () => {
+          test("404, article does not exist", () => {
             return request(app)
               .get("/api/articles/20/comments")
               .expect(404)
@@ -421,7 +421,7 @@ describe("/api", () => {
         });
       });
     });
-    it("GET: 200: get comment count for articles", () => {
+    test("GET: 200: get comment count for articles", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -447,7 +447,7 @@ describe("/api", () => {
              expect(totalCount).not.toBe(0)
         });
     });
-    it("GET: 200: all articles sorted by deafult to date", () => {
+    test("GET: 200: all articles sorted by deafult to date", () => {
       return request(app)
         .get("/api/articles/")
         .expect(200)
@@ -457,7 +457,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: sort articles by any valid column in descending order", () => {
+    test("GET: 200: sort articles by any valid column in descending order", () => {
       return request(app)
         .get("/api/articles?sort_by=topic&order=desc")
         .expect(200)
@@ -467,7 +467,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: sort article by author in ascending order", () => {
+    test("GET: 200: sort article by author in ascending order", () => {
       return request(app)
         .get("/api/articles?sort_by=author")
         .expect(200)
@@ -477,7 +477,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: order article by ascending order", () => {
+    test("GET: 200: order article by ascending order", () => {
       return request(app)
         .get("/api/articles?order=asc")
         .expect(200)
@@ -487,7 +487,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: filters the articles by author", () => {
+    test("GET: 200: filters the articles by author", () => {
       return request(app)
         .get("/api/articles?author=icellusedkars")
         .expect(200)
@@ -498,7 +498,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: filters the articles by topic", () => {
+    test("GET: 200: filters the articles by topic", () => {
       return request(app)
         .get("/api/articles?topic=mitch")
         .expect(200)
@@ -509,7 +509,7 @@ describe("/api", () => {
           });
         });
     });
-      it("GET: 200: filters the articles by author & topic", () => {
+      test("GET: 200: filters the articles by author & topic", () => {
       return request(app)
         .get("/api/articles?topic=mitch&author=icellusedkars")
         .expect(200)
@@ -521,7 +521,7 @@ describe("/api", () => {
           });
         });
     });
-    it("GET: 200: returns empty array for author that does not exist", () => {
+    test("GET: 200: returns empty array for author that does not exist", () => {
       return request(app)
         .get("/api/articles?author=lurker")
         .expect(200)
@@ -529,7 +529,7 @@ describe("/api", () => {
           expect(res.body.articles.length).toBe(0);
         });
     });
-    it("GET: 200: returns empty array for topic that does not exist", () => {
+    test("GET: 200: returns empty array for topic that does not exist", () => {
       return request(app)
         .get("/api/articles?topic=paper")
         .expect(200)
@@ -538,7 +538,7 @@ describe("/api", () => {
         });
     });
     describe("/articles errors", () => {
-      it("Patch Method Error: 405", () => {
+      test("Patch Method Error: 405", () => {
         return request(app)
           .patch("/api/articles")
           .expect(405)
@@ -549,7 +549,7 @@ describe("/api", () => {
     });
   });
   describe("comments/:comment_id", () => {
-    it("PATCH 200: updates the votes item in the comments", () => {
+    test("PATCH 200: updates the votes item in the comments", () => {
       return request(app)
         .patch("/api/comments/2")
         .send({ inc_votes: -2 })
@@ -558,7 +558,7 @@ describe("/api", () => {
           expect(res.body.comment.votes).toBe(12);
         });
     });
-    it("GET: 200: returns list of all comments", () => {
+    test("GET: 200: returns list of all comments", () => {
       return request(app)
         .get("/api/comments/")
         .expect(200)
@@ -577,7 +577,7 @@ describe("/api", () => {
           });
         });
     });
-    it("DELETE: 204: removes a comment by comment_id", () => {
+    test("DELETE: 204: removes a comment by comment_id", () => {
       return request(app)
         .del("/api/comments/2")
         .expect(204)
@@ -596,7 +596,7 @@ describe("/api", () => {
 
     describe("comments/:comment_id errors", () => {
     
-      it("PATCH ERR Not found: 404: try to patch a comment that does not exist", () => {
+      test("PATCH ERR Not found: 404: try to patch a comment that does not exist", () => {
         return request(app)
           .patch("/api/comments/1000")
           .send({ inc_votes: 12 })
@@ -605,7 +605,7 @@ describe("/api", () => {
             expect(res.body.msg).toBe("comment not found");
           });
       });
-      it("PATCH ERR: 400: try to change vote by a non-number", () => {
+      test("PATCH ERR: 400: try to change vote by a non-number", () => {
         return request(app)
           .patch("/api/comments/2")
           .send({ inc_votes: "thirty" })
@@ -614,7 +614,7 @@ describe("/api", () => {
             expect(res.body.msg).toBe("bad request");
           });
       });
-      it("PATCH ERR, no inc_Votes, returns comment unchanged", () => {
+      test("PATCH ERR, no inc_Votes, returns comment unchanged", () => {
         return request(app)
           .patch("/api/comments/3")
 
@@ -623,12 +623,12 @@ describe("/api", () => {
             expect(res.body.comment.votes).toBe(100);
           });
       });
-      it("Method Error: 405: PUT", () => {
+      test("Method Error: 405: PUT", () => {
         return request(app).put("/api/comments/1").expect(405);
       });
     });
   });
-  it("GET: 200: returns JSON describing available endpoints", () => {
+  test("GET: 200: returns JSON describing available endpoints", () => {
     return request(app)
       .get("/api")
       .then((res) => {
@@ -651,7 +651,7 @@ describe("/api", () => {
       });
   });
   describe("/api errors", () => {
-    it("Method Error: 405: DELETE", () => {
+    test("Method Error: 405: DELETE", () => {
       return request(app).del("/api").expect(405);
     });
   });
